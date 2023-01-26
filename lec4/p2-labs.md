@@ -11,134 +11,140 @@ backgroundColor: white
 <!-- theme: gaia -->
 <!-- _class: lead -->
 
-# 第四讲 多道程序与分时多任务
-## 第二节 实践：多道程序与分时多任务操作系统
+# Lecture 4 Multiprogramming and time-sharing multitasking
+## Section 2 Practice: Multiprogramming and time-sharing multitasking operating system
 <br>
 <br>
 
-向勇 陈渝 李国良 
+Xiang Yong Chen Yu Li Guoliang
 
 <br>
 <br>
 
-2022年秋季
+Fall 2022
 
 ---
-**提纲**
+**Outline**
 
-### 1. 实验目标和步骤
-- 实验目标
-- 实践步骤
-2. 多道批处理操作系统设计
-3. 应用程序设计
-4. 锯齿螈OS：支持应用程序加载
-5. 始初龙OS：支持多道程序协作调度
-6. 腔骨龙OS：分时多任务OS
+### 1. Experimental objectives and steps
+- Experiment objectives
+- Practical steps
+2. Multi-channel batch processing operating system design
+3. Application Design
+4. Sawtooth OS: Support application loading
+5. Shichulong OS: Support multi-program cooperative scheduling
+6. Coelophysis OS: time-sharing multitasking OS
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+#### Experiment Objectives
+
+![bg right:43% 90%](figs/multiprog-os-detail.png)
+
+- MultiprogOS target
+     - Further improve the overall performance and efficiency of multiple applications in the system
+- BatchOS target
+     - Isolate APP from OS to improve system security and efficiency
+- LibOS target
+     - Isolate applications from hardware, simplifying the difficulty and complexity of applications accessing hardware
 
 ---
 
-#### 实验目标
+#### Experiment Requirements
+- Understand
+     - Cooperative scheduling and preemptive scheduling
+     - Tasks and task switching
+- Write
+     - Multiprogramming operating system
+     - Time-sharing multitasking operating system
 
-![bg right:53% 90%](figs/multiprog-os-detail.png)
+<!-- Sawtooth Archosaurus Coelophysis -->
 
-- MultiprogOS目标
-    - 进一步提高系统中多个应用的总体性能和效率
-- BatchOS目标
-    - 让APP与OS隔离，提高系统的安全性和效率
-- LibOS目标
-    - 让应用与硬件隔离，简化应用访问硬件的难度和复杂性
-
----
-#### 实验要求
-- 理解
-    - 协作式调度和抢占式调度
-    - 任务和任务切换
-- 会写
-    - 多道程序操作系统
-    - 分时多任务操作系统
-
-<!-- 锯齿螈  始初龙  腔骨龙 -->
-
-![bg right:51% 70%](figs/ch3-oses.png)
+![bg right:45% 70%](figs/ch3-oses.png)
 
 ---
-#### 多道程序系统的结构
+#### Structure of a multiprogramming system
 
 ![bg 55%](figs/multiprog-os-detail.png)
 
 ---
-#### 总体思路
-- 编译：应用程序和内核独立编译，合并为一个镜像
-- 编译：应用程序需要各自的起始地址
-- 构造：系统调用服务请求接口，进程的管理与初始化
-- 构造：进程控制块，进程上下文/状态管理
-- 运行：特权级切换，进程与OS相互切换
-- 运行：进程通过系统调用/中断实现主动/被动切换
+#### General idea
+- Compilation: The application program and the kernel are compiled independently and merged into one image
+- Compilation: applications require their respective start addresses
+- Construction: system call service request interface, process management and initialization
+- Structure: process control block, process context/state management
+- Run: privilege level switching, process and OS switching
+- Running: The process realizes active/passive switching through system calls/interrupts
 
 ---
-#### 历史背景
+#### History background
 
-- 1961年英国 Leo III 计算机
-- 支持在计算机内存中**加载**多个不同的程序，并从第一个开始**依次运行**
-<!-- - J. Lyons & Co.用于商业事务处理
+- 1961 British Leo III computer
+- Supports **loading** multiple different programs in computer memory and running **sequentially** from the first one
+<!-- - J. Lyons & Co. for commercial transactions
 
-J. Lyons & Co.是一家成立于1884年的英国连锁餐厅，食品制造业和酒店集团。 -->
+J. Lyons & Co. is a British restaurant chain, food manufacturing and hotel group founded in 1884. -->
 
 <!-- https://baike.baidu.com/item/EDSAC/7639053
-电子延迟存储自动计算器（英文：Electronic Delay Storage Automatic Calculator、EDSAC）是英国的早期计算机。1946年,英国剑桥大学数学实验室的莫里斯·威尔克斯教授和他的团队受冯·诺伊曼的First Draft of a Report on the EDVAC的启发，以EDVAC为蓝本，设计和建造EDSAC，1949年5月6日正式运行，是世界上第一台实际运行的存储程序式电子计算机。
-是EDSAC在工程实施中同样遇到了困难：不是技术，而是资金缺乏。在关键时刻，威尔克斯成功地说服了伦敦一家面包公司J．Lyons&Co。．的老板投资该项目，终于使计划绝处逢生。1949年5月6日，EDSAC首次试运行成功，它从带上读人一个生成平方表的程序并执行，正确地打印出结果。作为对投资的回报，LyOHS公司取得了批量生产EDSAC的权利，这就是于1951年正式投入市场的LEO计算机(Lyons Electronic Office)，这通常被认为是世界上第一个商品化的计算机型号，因此这也成了计算机发展史上的一件趣事：第一家生产出商品化计算机的厂商原先竟是面包房。Lyons公司后来成为英国著名的“国际计算机有限公司”即ICL的一部分。
+Electronic Delay Storage Automatic Calculator (English: Electronic Delay Storage Automatic Calculator, EDSAC) is an early British computer. In 1946, Professor Maurice Wilkes of the Mathematics Laboratory of the University of Cambridge and his team were inspired by von Neumann's First Draft of a Report on the EDVAC, and designed and built EDSAC based on EDVAC. It was officially put into operation on May 6, 1949. It is the world's first stored-program electronic computer that actually runs.
+It was EDSAC that also encountered difficulties in project implementation: not technology, but lack of funds. At the crucial moment, Wilkes successfully persuaded J. Lyons & Co. ． The boss invested in the project and finally brought the plan back to life. On May 6, 1949, EDSAC was successfully tested for the first time. It read a program to generate a square table from the tape and executed it, and printed the result correctly. In return for the investment, LyOHS obtained the right to mass-produce EDSAC, which is the LEO computer (Lyons Electronic Office) that was officially put on the market in 1951, which is generally considered to be the first commercialized computer model in the world, so This has also become an interesting fact in the history of computer development: the first manufacturer to produce a commercial computer turned out to be a bakery. Lyons company later became part of the famous "International Computer Co., Ltd.", or ICL, in the UK.
 -->
 
 ![bg right 100%](figs/multiprog-os.png)
 
 ---
-**提纲**
+**Outline**
 
-1. 实验目标和步骤
-- 实验目标
-### 实践步骤
-2. 多道批处理操作系统设计
-3. 应用程序设计
-4. 锯齿螈OS：支持应用程序加载
-5. 始初龙OS：支持多道程序协作调度
-6. 腔骨龙OS：分时多任务OS
+1. Experimental objectives and steps
+- Experiment objectives
+- **Practical steps**
+2. Multi-channel batch processing operating system design
+3. Application Design
+4. Sawtooth OS: Support application loading
+5. Shichulong OS: Support multi-program cooperative scheduling
+6. Coelophysis OS: time-sharing multitasking OS
 
 ---
 
-#### 实践步骤（基于BatchOS）
-- 修改APP的链接脚本(定制起始地址)
-- 加载&执行应用
-- 切换任务
+#### Practical steps (based on BatchOS)
+- Modify the APP link script (custom start address)
+- Load & execute application
+- Switch tasks
 
 ![bg right 100%](figs/multiprog-os.png)
 
 ---
 
-#### 三个应用程序交替执行
+#### Three applications are executed alternately
 ```
 git clone https://github.com/rcore-os/rCore-Tutorial-v3.git
 cd rCore-Tutorial-v3
 git checkout ch3-coop
 ```
-包含三个应用程序，大家谦让着**交替执行**
+Contains three applications, everyone humbly **executes alternately**
 ```
 user/src/bin/
-├── 00write_a.rs # 5次显示 AAAAAAAAAA 字符串
-├── 01write_b.rs # 2次显示 BBBBBBBBBB 字符串
-└── 02write_c.rs # 3次显示 CCCCCCCCCC 字符串
+├── 00write_a.rs # Display AAAAAAAAAA string 5 times
+├── 01write_b.rs # Display BBBBBBBBBB string twice
+└── 02write_c.rs # Display CCCCCCCCCC string 3 times
 ```
 
 ---
 
-#### 运行结果
+#### operation result
 ```
 [RustSBI output]
 [kernel] Hello, world!
-AAAAAAAAAA [1/5]
+AAAAAAAAAAA [1/5]
 BBBBBBBBBB [1/2]
 ....
 CCCCCCCCCC [2/3]
-AAAAAAAAAA [3/5]
+AAAAAAAAAAA [3/5]
 Test write_b OK!
 [kernel] Application exited with code 0
 CCCCCCCCCC [3/3]
@@ -149,321 +155,321 @@ CCCCCCCCCC [3/3]
 
 
 ---
-**提纲**
+**Outline**
 
-1. 实验目标和步骤
-### 2. 多道批处理操作系统设计
-3. 应用程序设计
-4. 锯齿螈OS：支持应用程序加载
-5. 始初龙OS：支持多道程序协作调度
-6. 腔骨龙OS：分时多任务OS
-
----
-
-#### 软件架构
-
-![bg 70%](figs/multiprog-os-detail.png)
+1. Experimental objectives and steps
+### 2. Multi-channel batch processing operating system design
+3. Application Design
+4. Sawtooth OS: Support application loading
+5. Shichulong OS: Support multi-program cooperative scheduling
+6. Coelophysis OS: time-sharing multitasking OS
 
 ---
 
-#### 代码结构：应用程序
-构建应用
+#### Software Architecture
+
+![bg 55%](figs/multiprog-os-detail.png)
+
+---
+
+#### Code Structure: Application
+Build application
 ```
 └── user
-    ├── build.py(新增：使用 build.py 构建应用使得它们占用的物理地址区间不相交)
-    ├── Makefile(修改：使用 build.py 构建应用)
-    └── src (各种应用程序)    
+     ├── build.py (new: use build.py to build applications so that the physical address ranges they occupy are disjoint)
+     ├── Makefile (modification: use build.py to build the application)
+     └── src (various applications)
 ```
 
 
 ---
 
-#### 代码结构：完善任务管理功能
+#### Code structure: perfect task management function
 
-改进OS：``Loader``模块加载和执行程序
+Improve OS: ``Loader`` module loads and executes programs
 ```
 ├── os
-│   └── src
-│       ├── batch.rs(移除：功能分别拆分到 loader 和 task 两个子模块)
-│       ├── config.rs(新增：保存内核的一些配置)
-│       ├── loader.rs(新增：将应用加载到内存并进行管理)
-│       ├── main.rs(修改：主函数进行了修改)
-│       ├── syscall(修改：新增若干 syscall)
+│ └── src
+│ ├── batch.rs (removed: the function is divided into two submodules, loader and task)
+│ ├── config.rs (new: save some configurations of the kernel)
+│ ├── loader.rs (new: load the application into the memory and manage it)
+│ ├── main.rs (modification: the main function has been modified)
+│ ├── syscall (modification: add some syscalls)
 ```
 
 ---
 
-#### 代码结构：进程切换
+#### Code structure: process switching
 
-改进OS：`TaskManager`模块管理/切换程序的执行
+Improve OS: `TaskManager` module manages/switches execution of programs
 ```
 ├── os
-│   └── src
-│       ├── task(新增：task 子模块，主要负责任务管理)
-│       │   ├── context.rs(引入 Task 上下文 TaskContext)
-│       │   ├── mod.rs(全局任务管理器和提供给其他模块的接口)
-│       │   ├── switch.rs(将任务切换的汇编代码解释为 Rust 接口 __switch)
-│       │   ├── switch.S(任务切换的汇编代码)
-│       │   └── task.rs(任务控制块 TaskControlBlock 和任务状态 TaskStatus 的定义)
+│ └── src
+│ ├── task (new: task sub-module, mainly responsible for task management)
+│ │ ├── context.rs (introduce Task context TaskContext)
+│ │ ├── mod.rs (global task manager and interface provided to other modules)
+│ │ ├── switch.rs (interprets the assembly code of task switching as the Rust interface __switch)
+│ │ ├── switch.S (assembly code for task switching)
+│ │ └── task.rs (definition of task control block TaskControlBlock and task status TaskStatus)
 ```
 
 ---
 
-**提纲**
+**Outline**
 
-1. 实验目标和步骤
-2. 多道批处理操作系统设计
-### 3. 应用程序设计
-4. 锯齿螈OS：支持应用程序加载
-5. 始初龙OS：支持多道程序协作调度
-6. 腔骨龙OS：分时多任务OS
+1. Experimental objectives and steps
+2. Multi-channel batch processing operating system design
+### 3. Application Design
+4. Sawtooth OS: Support application loading
+5. Shichulong OS: Support multi-program cooperative scheduling
+6. Coelophysis OS: time-sharing multitasking OS
 
 ---
 
-#### 应用程序项目结构
+#### Application Project Structure
 
-没有更新 应用名称有数字编号
+No updates App names have numbers
 
 ```
 user/src/bin/
-├── 00write_a.rs # 5次显示 AAAAAAAAAA 字符串
-├── 01write_b.rs # 2次显示 BBBBBBBBBB 字符串
-└── 02write_c.rs # 3次显示 CCCCCCCCCC 字符串
+├── 00write_a.rs # Display AAAAAAAAAA string 5 times
+├── 01write_b.rs # Display BBBBBBBBBB string twice
+└── 02write_c.rs # Display CCCCCCCCCC string 3 times
 ```
 ---
 
-#### 应用程序的内存布局
+#### Application memory layout
 
-- 由于每个应用被加载到的位置都不同，也就导致它们的链接脚本 linker.ld 中的 **``BASE_ADDRESS``** 都是不同的。
-- 写一个脚本定制工具 `build.py` ，为每个应用定制了各自的链接脚本
-   - **``应用起始地址 = 基址 + 数字编号 * 0x20000``**  
+- Since each application is loaded in a different location, the **``BASE_ADDRESS``** in their linker script linker.ld are all different.
+- Write a script customization tool `build.py`, which customizes its own link script for each application
+    - **``Application start address = base address + number number * 0x20000``**
 
 ---
 
-#### yield系统调用
+#### Yield system call
 
 ```rust
 //00write_a.rs
 fn main() -> i32 {
-    for i in 0..HEIGHT {
-        for _ in 0..WIDTH {
-            print!("A");
-        }
-        println!(" [{}/{}]", i + 1, HEIGHT);
-        yield_(); //放弃处理器 
-    }
-    println!("Test write_a OK!");
-    0
+     for i in 0..HEIGHT {
+         for _ in 0..WIDTH {
+             print!("A");
+         }
+         println!(" [{}/{}]", i + 1, HEIGHT);
+         yield_(); //Give up the handler
+     }
+     println!("Test write_a OK!");
+     0
 }
 ```
 
 ---
 
-#### yield系统调用  
+#### Yield system call
 
-- 应用之间是**相互不知道**的
-- 应用需要**主动让出**处理器
-- 需要通过**新的系统调用**实现  
-  - **``const SYSCALL_YIELD: usize = 124;``**
+- Apps are **mutually unaware**
+- Application requires **actively relinquishes** processor
+- needs to be implemented via a **new syscall**
+   - **``const SYSCALL_YIELD: usize = 124;``**
 
 
 
 ---
 
-#### yield系统调用  
+#### Yield system call
 
 ``` Rust
 const SYSCALL_YIELD: usize = 124;
 pub fn sys_yield() -> isize {
-    syscall(SYSCALL_YIELD, [0, 0, 0])
+     syscall(SYSCALL_YIELD, [0, 0, 0])
 }
 pub fn yield_() -> isize {
-    sys_yield()
+     sys_yield()
 }
 ```
 
 
 ---
-**提纲**
+**Outline**
 
-1. 实验目标和步骤
-2. 多道批处理操作系统设计
-3. 应用程序设计
-### 4. 锯齿螈OS：支持应用程序加载
-5. 始初龙OS：支持多道程序协作调度
-6. 腔骨龙OS：分时多任务OS
+1. Experimental objectives and steps
+2. Multi-channel batch processing operating system design
+3. Application Design
+### 4. Axolotl OS: support application loading
+5. Shichulong OS: Support multi-program cooperative scheduling
+6. Coelophysis OS: time-sharing multitasking OS
 
 ---
-#### 锯齿螈OS：支持应用程序加载
+#### Sawtooth OS: support application loading
 
-二叠纪“锯齿螈”操作系统支持在内存中驻留多个应用，形成多道程序操作系统 – Multiprog OS；
+The Permian "sawtooth salamander" operating system supports multiple applications residing in memory to form a multiprogramming operating system – Multiprog OS;
   
-![bg right:57% 100%](figs/multiprog-os-detail.png)
+![bg right:50% 100%](figs/multiprog-os-detail.png)
 
 ---
 
-#### 多道程序加载
-- 应用的加载方式有不同
-- 所有的应用在内核初始化的时候就一并被加载到内存中
-- 为了避免覆盖，它们自然需要被**加载到不同的物理地址**
+#### Multi-Program Loading
+- Apps are loaded differently
+- All applications are loaded into memory at the time of kernel initialization
+- To avoid overwriting, they naturally need to be **loaded at different physical addresses**
 
 
 ---
 
-#### 多道程序加载
+#### Multi-Program Loading
 
 ```Rust
 fn get_base_i(app_id: usize) -> usize {
-    APP_BASE_ADDRESS + app_id * APP_SIZE_LIMIT
+     APP_BASE_ADDRESS + app_id * APP_SIZE_LIMIT
 }
 
 let base_i = get_base_i(i);
 // load app from data section to memory
 let src = (app_start[i]..app_start[i + 1]);
-let dst = (base_i.. base_i+src.len());
+let dst = (base_i.. base_i+src. len());
 dst.copy_from_slice(src);
 ```
 
 
 ---
 
-#### 执行程序
+#### Execute program
 
-- 执行时机
-  - 当多道程序的初始化放置工作完成
-  - 某个应用程序运行结束或出错的时
+- Execution timing
+   - When the initial placement of the multiprogramming job is complete
+   - When an application ends or an error occurs
 
-- 执行方式
-  - 调用 run_next_app 函数**切换**到第一个/下一个应用程序
+- Implementation modalities
+   - Call the run_next_app function to **switch** to the first/next application
   
 
 ---
 
-#### 切换下一个程序
+#### Switch to the next program
 
-  - 内核态到用户态
-  - 用户态到内核态
+   - Kernel mode to user mode
+   - From user mode to kernel mode
 
 
 ---
 
-#### 切换下一个程序
+#### Switch to the next program
 
-  - 跳转到编号i的应用程序编号i的入口点 `entry(i)`
-  - 将使用的栈切换到用户栈stack(i) 
+   - Jump to entry point `entry(i)` of application number i for number i
+   - Switch the used stack to the user stack stack(i)
 
 ![bg right:55% 90%](figs/kernel-stack.png)
 
 
 ---
 
-#### 执行程序
+#### execute program
 
-现在完成了支持**把应用都放到内存中**的锯齿螈OS
+Axolotl OS that supports **putting applications in memory** is now complete
 ![bg right:57% 95%](figs/jcy-multiprog-os-detail.png)
 
 ---
-**提纲**
+**Outline**
 
-... ...
+...
 
-4. 锯齿螈OS：支持应用程序加载
-### 5. 始初龙OS：支持多道程序协作调度
-* 任务切换
-* Trap控制流切换
-* 协作式调度
-6. 腔骨龙OS：分时多任务OS
-
----
-
-#### 支持多道程序协作式调度
-
-协作式多道程序：应用程序**主动放弃** CPU 并**切换**到另一个应用继续执行，从而提高系统整体执行效率；
-
-![bg right:54% 90%](figs/more-task-multiprog-os-detail.png)
+4. Sawtooth OS: Support application loading
+### 5. Shichulong OS: Support multi-program cooperative scheduling
+* Task switching
+* Trap control flow switching
+* Collaborative Scheduling
+6. Coelophysis OS: time-sharing multitasking OS
 
 ---
 
-#### 任务切换
+#### Support multi-program cooperative scheduling
 
-![bg 70%](figs/more-task-multiprog-os-detail.png)
+Cooperative multi-programming: the application **voluntarily gives up** the CPU and **switches** to another application to continue execution, thereby improving the overall execution efficiency of the system;
+
+![bg right:50% 90%](figs/more-task-multiprog-os-detail.png)
 
 ---
 
-#### 进程
+#### Task switching
 
-- **进程(Process)** ：一个具有一定**独立功能**的程序在一个**数据集合**上的一次**动态执行**过程。也称为**任务(Task)**。
+![bg 60%](figs/more-task-multiprog-os-detail.png)
+
+---
+
+#### Process
+
+- **Process (Process)**: A **dynamic execution** process of a program with certain **independent functions** on a **data collection**. Also known as **Task (Task)**.
 ![bg right 100%](figs/task-multiprog-os-detail.png)
 
 
 ---
 
-#### 时间片（slice）
+#### Time slice (slice)
 
-- 应用执行过程中的一个时间片段上的执行片段或空闲片段，称为 “ 计算任务片 ” 或“ 空闲任务片 ”，统称**任务片**（task slice）
+- The execution segment or idle segment in a time segment during application execution is called "computing task slice" or "idle task slice", collectively referred to as **task slice** (task slice)
 ![bg right 100%](figs/task-multiprog-os-detail.png)
 
 
 
 ---
-#### 任务运行状态
-  - 在一个时间片内的应用执行情况
-    - running
-    - ready
+#### Task running status
+   - Application execution within a time slice
+     - running
+     -ready
 
 ```rust
 pub enum TaskStatus {
-    UnInit,
-    Ready,
-    Running,
-    Exited,
+     UnInit,
+     Ready,
+     Running,
+     Exited,
 }
 ```
-![bg right:65% 100%](figs/more-task-multiprog-os-detail.png)
+![bg right:50% 100%](figs/more-task-multiprog-os-detail.png)
 
 ---
 
-#### 任务切换
-  - 从一个应用的执行过程切换到另外一个应用的执行过程
-    - 暂停一个应用的执行过程（当前任务）
-    - 继续另一应用的执行过程（下一任务）
-![bg right:65% 100%](figs/more-task-multiprog-os-detail.png)
+#### Task switching
+   - Switch from the execution process of one application to the execution process of another application
+     - Pause the execution of an application (current task)
+     - continue the execution of another application (next task)
+![bg right:50% 100%](figs/more-task-multiprog-os-detail.png)
 
 
 ---
 
-####  任务上下文（Task Context）
-- 应用运行在某一时刻的**执行状态（上下文）**
-  - 应用要暂停时，执行状态（上下文）可以被**保存**
-  - 应用要继续时，执行状态（上下文）可以被**恢复** 
+#### Task Context
+- The **execution state (context)** of the application running at a certain moment
+   - Execution state (context) can be **saved** when the application is about to be suspended
+   - Execution state (context) can be **restored** when the application is to continue
 ```rust
-1// os/src/task/context.rs
+1//os/src/task/context.rs
 2 pub struct TaskContext {
-3    ra: usize,      //函数返回地址
-4    sp: usize,      //用户栈指针
-5    s: [usize; 12], //属于Callee函数保存的寄存器集s0~s11
+3 ra: usize, //function return address
+4 sp: usize, //user stack pointer
+5 s: [usize; 12], //belongs to the register set s0~s11 saved by the Callee function
 6}
 ```
 
 
 ---
 
-#### 任务上下文数据结构
+#### Task context data structure
 
 ```rust
-1// os/src/task/context.rs
+1//os/src/task/context.rs
 2 pub struct TaskContext {
-3    ra: usize,
-4    sp: usize,
-5    s: [usize; 12],
+3 ra: usize,
+4 sp: usize,
+5 s: [usize; 12],
 6}
 ```
-``` rust
+```rust
 // os/src/trap/context.rs
 pub struct TrapContext {
-    pub x: [usize; 32],
-    pub sstatus: Sstatus,
-    pub sepc: usize,
+     pub x: [usize; 32],
+     pub sstatus: Sstatus,
+     pub sepc: usize,
 }
 ```
 
@@ -471,363 +477,400 @@ pub struct TrapContext {
 
 ---
 
-#### 不同类型上下文
-  - 函数调用上下文 
-  - Trap上下文 
-  - 任务（Task）上下文 
+#### Different types of context
+   - Function call context
+   - Trap context
+   - Task context
 
 ![bg right:60% 90%](figs/contexts-on-stacks.png)
 
 ---
 
-#### 任务（Task）上下文 vs 系统调用（Trap）上下文
+#### Task (Task) context vs system call (Trap) context
 
-任务切换是来自两个不同应用在内核中的 Trap 控制流之间的切换
-- 任务切换不涉及**特权级**切换；Trap切换涉及特权级切换；
-- 任务切换只保存编译器约定的callee 函数应该保存的**部分寄存器**；而Trap切换需要保存所有通用寄存器；
-- 任务切换和Trap切换都是**对应用是透明**的
-
----
-#### 控制流
-- 程序的控制流 (Flow of Control or Control Flow) --编译原理
-    - 以一个程序的指令、语句或基本块为单位的**执行序列**。
-- 处理器的控制流 --计算机组成原理
-    - 处理器中程序计数器的**控制转移序列**。
----
-#### 普通控制流：从应用程序员的角度来看控制流
-
-- 控制流是应用程序员编写的应用程序的**执行序列**，这些序列是程序员预设好的。
-- 称为 **普通控制流** (CCF，Common Control Flow)  
+A task switch is a switch between Trap control flows in the kernel from two different applications
+- Task switching does not involve **privilege level** switching; Trap switching involves privilege level switching;
+- Task switching only saves **partial registers** that the callee function agreed by the compiler should save; while Trap switching needs to save all general-purpose registers;
+- Both task switching and trap switching are **transparent to the application**
 
 ---
-#### 异常控制流：从操作系统程序员的角度来看控制流
+#### Control Flow
+- Program control flow (Flow of Control or Control Flow) -- Compilation principle
+     - The **execution sequence** in units of instructions, statements or basic blocks of a program.
+- Processor control flow -- Principles of computer composition
+     - The **control transfer sequence** of the program counter in the processor.
+---
+#### Common Control Flow: Control Flow from an Application Programmer's Perspective
 
-- 应用程序在执行过程中，如果发出系统调用请求，或出现外设中断、CPU 异常等情况，会出现前一条指令还在应用程序的代码段中，后一条指令就跑到操作系统的代码段中去了。
-- 这是一种控制流的“**突变**”，即控制流脱离了其所在的执行环境，并产生**执行环境的切换**。 
-- 这种“突变”的控制流称为 **异常控制流** (ECF, Exceptional Control Flow) 。
+- Control flow is the **sequence of execution** of an application program written by the application programmer, and these sequences are preset by the programmer.
+- Called **Common Control Flow** (CCF, Common Control Flow)
+
+---
+#### Abnormal Control Flow: Control Flow from an Operating System Programmer's Perspective
+
+- During the execution of the application program, if a system call request is issued, or a peripheral interrupt, CPU exception, etc. occurs, the previous instruction is still in the code segment of the application program, and the latter instruction will run to the code segment of the operating system gone.
+- This is a "**mutation**" of the control flow, that is, the control flow breaks away from the execution environment where it is located, and produces a **switch of the execution environment**.
+- This "mutant" control flow is called **Exceptional Control Flow** (ECF, Exceptional Control Flow).
 
 
 ---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
 
-#### 控制流上下文（执行环境的状态）
+#### Control flow context (the state of the execution environment)
 
-从硬件的角度来看普通控制流或异常控制流的执行过程
-* 从控制流起始的某条指令执行开始，指令可访问的所有物理资源的内容，包括自带的所有通用寄存器、特权级相关特殊寄存器、以及指令访问的内存等，会随着指令的执行而逐渐发生变化。
+From the perspective of hardware, the execution process of ordinary control flow or abnormal control flow
+* Starting from the execution of an instruction at the beginning of the control flow, the contents of all physical resources accessible by the instruction, including all general-purpose registers, privilege-related special registers, and memory accessed by the instruction, will follow the execution of the instruction And change gradually.
 
-- 把控制流在执行完某指令时的物理资源内容，即确保下一时刻能继续正确执行控制流指令的物理/虚拟资源内容称为***控制流上下文 (Context)*** ，也可称为控制流所在执行环境的状态。
+- The physical resource content of the control flow after executing a certain instruction, that is, the physical/virtual resource content that ensures that the control flow instruction can continue to be executed correctly at the next moment is called ***Control Flow Context (Context)***, it can also be Called the state of the execution environment in which the flow of control occurs.
 
-对于当前实践的OS，没有虚拟资源，而物理资源内容就是***通用寄存器/CSR寄存器***
-
----
-
-#### 控制流上下文（执行环境的状态）
-
-- 函数调用上下文
-    - 函数调用（执行函数切换）过程中的控制流上下文
-- 中断/异常/陷入上下文
-    - 操作系统中处理中断/异常/陷入的切换代码时的控制流的上下文
-- 任务（进程）上下文
-    - 操作系统中任务（进程）执行相关切换代码时的控制流的上下文
+For the currently practiced OS, there is no virtual resource, and the content of the physical resource is *** general register/CSR register ***
 
 ---
-**提纲**
+<style scoped>
+{
+  font-size: 33px
+}
+</style>
 
-... ...
+#### Control flow context (the state of the execution environment)
 
-4. 锯齿螈OS：支持应用程序加载
-5. 始初龙OS：支持多道程序协作调度
-* 任务切换
-### Trap控制流切换
-* 协作式调度
-6. 腔骨龙OS：分时多任务OS
+- function call context
+     - Control flow context during a function call (executing a function switch)
+- interrupt/exception/trapped in context
+     - The context of control flow when handling interrupt/exception/trapped switching code in the operating system
+- task (process) context
+     - The context of control flow when tasks (processes) in the operating system execute related switching codes
 
 ---
+**Outline**
 
-#### OS面临的挑战：任务切换
-在分属不同任务的两个Trap控制流之间进行hacker级操作，即进行**Trap上下文切换**，从而实现任务切换。
+...
 
-- Trap上下文在哪？
-- 任务上下文在哪？
-- 如何切换任务？
-- 任务切换应该发生在哪？
-- 任务切换后还能切换回吗？
+4. Sawtooth OS: Support application loading
+5. Shichulong OS: Support multi-program cooperative scheduling
+* Task switching
+### Trap control flow switching
+* Collaborative Scheduling
+6. Coelophysis OS: time-sharing multitasking OS
 
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+#### The OS Challenge: Task Switching
+Perform hacker-level operations between two Trap control flows belonging to different tasks, that is, perform **Trap context switching** to achieve task switching.
+
+- Where is the Trap context?
+- Where is the task context?
+- How to switch tasks?
+- Where should task switching occur?
+- Can I switch back after switching tasks?
+
+![bg right:45% 95%](figs/task-context.png)
+
+---
+#### Trap control flow switching: pause operation
+- a special function `__switch()`
+- During the period after calling `__switch()` until it returns, the original Trap control flow A will be suspended and switched out, and the CPU will run another Trap control flow B that is applied in the kernel.
 ![bg right 95%](figs/task-context.png)
 
----
-####  Trap控制流切换：暂停运行
-- 一个特殊的函数`__switch()`
-- 调用 `__switch()` 之后直到它返回前的这段时间，原 Trap 控制流 A 会先被暂停并被切换出去， CPU 转而运行另一个应用在内核中的 Trap 控制流 B 。
-![bg right 95%](figs/task-context.png)
-
 
 ---
-####  Trap控制流切换：恢复运行
-- 一个特殊的函数` __switch()`
-- 然后在某个合适的时机，原 Trap 控制流 A 才会从某一条 Trap 控制流 C （很有可能不是它之前切换到的 B ）切换回来继续执行并最终返回。
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
 
-从实现的角度讲， `__switch()` 函数和一个普通的函数之间的核心差别仅仅是它会**换栈** 。
-![bg right 95%](figs/task-context.png)
+#### Trap control flow switching: resume operation
+- A special function `__switch()`
+- Then at an appropriate time, the original Trap control flow A will switch back from a certain Trap control flow C (probably not the B it switched to before) to continue execution and finally return.
+
+From an implementation point of view, the core difference between a `__switch()` function and a normal function is simply that it **switches** the stack.
+![bg right:45% 95%](figs/task-context.png)
 
 
 ---
-#### Trap控制流切换函数`__switch()`
+#### Trap control flow switching function `__switch()`
 ![w:800](figs/switch.png)
 
 
 ---
-#### Trap控制流切换过程：切换前的状态
-阶段[1]：在 Trap 控制流 A 调用`__switch()`之前，A 的**内核栈**上只有 Trap 上下文和 Trap 处理函数的调用栈信息，而 B 是之前被切换出去的；
+#### Trap control flow switching process: state before switching
+Stage [1]: Before the Trap control flow A calls `__switch()`, A’s **kernel stack** only has the Trap context and the call stack information of the Trap processing function, and B was switched out before;
 ![bg right:55% 100%](figs/switch.png)
 
 
 ---
-#### Trap控制流切换过程：保存A任务上下文
-阶段 [2]：A 在 A 任务上下文空间在里面保存 **CPU 当前的寄存器快照**；
+#### Trap control flow switching process: save A task context
+Stage [2]: A saves the **CPU current register snapshot** in the A task context space;
 ![bg right:55% 100%](figs/switch.png)
 
 ---
-#### Trap控制流切换过程：恢复B任务上下文
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
 
-阶段 [3]：读取 next_task_cx_ptr 指向的 B 任务上下文，恢复 ra 寄存器、s0~s11 寄存器以及 sp 寄存器。
-* 这一步做完后， `__switch()` 才能做到一个函数跨两条控制流执行，即 通过**换栈**也就实现了控制流的切换 。
-![bg right:55% 100%](figs/switch.png)
+#### Trap control flow switching process: restore B task context
+
+Phase [3]: Read the B task context pointed to by next_task_cx_ptr, restore the ra register, s0~s11 register and sp register.
+* After this step is completed, `__switch()` can execute a function across two control flows, that is, the switching of the control flow is realized by **switching the stack**.
+![bg right:50% 100%](figs/switch.png)
 
 
 ---
-#### Trap控制流切换过程：执行B任务代码
-阶段 [4]：当 CPU 执行 ret 汇编伪指令完成 `__switch()` 函数返回后，任务 B 可以从调用 `__switch()` 的位置继续向下执行。
-* `__switch()`通过恢复 sp 寄存器换到了任务 B 的内核栈上，实现了控制流的切换，从而做到一个函数跨两条控制流执行。
+#### Trap control flow switching process: execute B task code
+Stage [4]: After the CPU executes the ret assembly pseudo-instruction and completes the return of the `__switch()` function, task B can continue to execute downwards from the position where `__switch()` was called.
+* `__switch()` is switched to the kernel stack of task B by restoring the sp register, realizing the switching of control flow, so that a function can be executed across two control flows.
 ![bg right:53% 100%](figs/switch.png)
 
 
 
 ---
-#### `__switch()`的接口
+#### Interface of `__switch()`
 ```
- 1 // os/src/task/switch.rs
- 2 
- 3 global_asm!(include_str!("switch.S"));
- 4 
- 5 use super::TaskContext;
- 6 
- 7 extern "C" {
- 8     pub fn __switch(
- 9         current_task_cx_ptr: *mut TaskContext,
-10         next_task_cx_ptr: *const TaskContext
-11     );
-12 }
+  1 // os/src/task/switch.rs
+  2 
+  3 global_asm!(include_str!("switch.S"));
+  4
+  5 use super::TaskContext;
+  6
+  7 extern "C" {
+  8 pub fn __switch(
+  9 current_task_cx_ptr: *mut TaskContext,
+10 next_task_cx_ptr: *const TaskContext
+11);
+12}
 ```
 
 
 ---
-#### `__switch()`的实现
+#### Implementation of `__switch()`
 
 ```
 12 __switch:
-13    # 阶段 [1]
-14    # __switch(
-15    #     current_task_cx_ptr: *mut TaskContext,
-16    #     next_task_cx_ptr: *const TaskContext
-17    # )
-18    # 阶段 [2]
-19    # save kernel stack of current task
-20    sd sp, 8(a0)
-21    # save ra & s0~s11 of current execution
-22    sd ra, 0(a0)
-23    .set n, 0
-24    .rept 12
-25        SAVE_SN %n
-26        .set n, n + 1
-27    .endr
+13 # stage [1]
+14 # __switch(
+15 # current_task_cx_ptr: *mut TaskContext,
+16 # next_task_cx_ptr: *const TaskContext
+17#)
+18 # stage [2]
+19 # save kernel stack of current task
+20 sd sp, 8(a0)
+21 # save ra & s0~s11 of current execution
+22 sd ra, 0(a0)
+23.set n, 0
+24 .rept 12
+25 SAVE_SN %n
+26. set n, n + 1
+27.endr
 
 ```
 
 
 ---
-#### `__switch()`的实现
+#### Implementation of `__switch()`
 
 ```
-28    # 阶段 [3]
-29    # restore ra & s0~s11 of next execution
-30    ld ra, 0(a1)
-31    .set n, 0
-32    .rept 12
-33        LOAD_SN %n
-34        .set n, n + 1
-35    .endr
-36    # restore kernel stack of next task
-37    ld sp, 8(a1)
-38    # 阶段 [4]
-39    ret
+28 # stage [3]
+29 # restore ra & s0~s11 of next execution
+30 ld ra, 0(a1)
+31. set n, 0
+32 .rept 12
+33 LOAD_SN %n
+34.set n, n + 1
+35.endr
+36 # restore kernel stack of next task
+37 ld sp, 8(a1)
+38 # stage [4]
+39 ret
 ```
 
 
 
 ---
-**提纲**
+**Outline**
 
-... ...
+...
 
-4. 锯齿螈OS：支持应用程序加载
-5. 始初龙OS：支持多道程序协作调度
-* 任务切换
-* Trap控制流切换
-### 协作式调度
-6. 腔骨龙OS：分时多任务OS
+4. Sawtooth OS: Support application loading
+5. Shichulong OS: Support multi-program cooperative scheduling
+* Task switching
+* Trap control flow switching
+### Cooperative Scheduling
+6. Coelophysis OS: time-sharing multitasking OS
 
 ---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
 
-#### 任务控制块
-操作系统管理控制进程运行所用的信息集合
+#### Task Control Block
+The operating system manages the collection of information used to control the running of processes
 ```Rust
 pub struct TaskControlBlock {
-    pub task_status: TaskStatus,
-    pub task_cx: TaskContext,
+     pub task_status: TaskStatus,
+     pub task_cx: TaskContext,
 }
 ```
-- 任务管理模块
+- Task management module
 ```Rust
 struct TaskManagerInner {
-    tasks: [TaskControlBlock; MAX_APP_NUM],
-    current_task: usize,
+     tasks: [TaskControlBlock; MAX_APP_NUM],
+     current_task: usize,
 }
 ```
 ![bg right:50% 100%](figs/more-task-multiprog-os-detail.png)
 
 
 ---
-#### 协作式调度
-- `sys_yield`和`sys_exit`系统调用
+#### Cooperative Scheduling
+- `sys_yield` and `sys_exit` system calls
 ```rust
 pub fn sys_yield() -> isize {
-    suspend_current_and_run_next();
-    0
+     suspend_current_and_run_next();
+     0
 }
 pub fn sys_exit(exit_code: i32) -> ! {
-    println!("[kernel] Application exited with code {}", exit_code);
-    exit_current_and_run_next();
-    panic!("Unreachable in sys_exit!");
+     println!("[kernel] Application exited with code {}", exit_code);
+     exit_current_and_run_next();
+     panic!("Unreachable in sys_exit!");
 }
 ```
 
 ---
-#### 协作式调度
+#### Cooperative Scheduling
 
-- `sys_yield`和`sys_exit`系统调用
+- `sys_yield` and `sys_exit` system calls
 
 ```rust
 // os/src/task/mod.rs
 
 pub fn suspend_current_and_run_next() {
-    mark_current_suspended();
-    run_next_task();
+     mark_current_suspended();
+     run_next_task();
 }
 
 pub fn exit_current_and_run_next() {
-    mark_current_exited();
-    run_next_task();
+     mark_current_exited();
+     run_next_task();
 }
 ```
 
 
 ---
-#### 协作式调度
+#### Cooperative Scheduling
 
-- `sys_yield`和`sys_exit`系统调用
+- `sys_yield` and `sys_exit` system calls
 ```Rust
- fn run_next_task(&self) {
-    ......
-    unsafe {
-        __switch(
-            current_task_cx_ptr, //当前任务上下文
-            next_task_cx_ptr,    //下个任务上下文
-        );
-    }
+  fn run_next_task(&self) {
+      …
+     unsafe {
+         __switch(
+             current_task_cx_ptr, //current task context
+             next_task_cx_ptr, //Next task context
+         );
+     }
 ```
 
 ---
-#### 第一次进入用户态
-**Q:如何实现？**
+#### Enter user mode for the first time
+**Q: How to achieve it?**
 
-如果能搞定，我们就实现了支持多道程序协作调度的始初龙操作系统
-
----
-**提纲**
-
-1. 实验目标和步骤
-2. 多道批处理操作系统设计
-3. 应用程序设计
-4. 锯齿螈OS：支持应用程序加载
-5. 始初龙OS：支持多道程序协作调度
-### 6. 腔骨龙OS：分时多任务OS
+If it can be done, we will realize the initial dragon operating system that supports multi-program cooperative scheduling
 
 ---
+**Outline**
 
-#### 腔骨龙OS：分时多任务OS
-
-三叠纪“腔骨龙”操作系统 – Timesharing OS 则可以**抢占**应用的执行，从而可以公平和高效地分时执行多个应用，提高系统的整体效率。
-
-![bg right:52% 100%](figs/time-task-multiprog-os-detail.png)
+1. Experimental objectives and steps
+2. Multi-channel batch processing operating system design
+3. Application Design
+4. Sawtooth OS: Support application loading
+5. Shichulong OS: Support multi-program cooperative scheduling
+### 6. Coelophysis OS: time-sharing multitasking OS
 
 ---
 
-#### 分时多任务操作系统的基本思路
-- 设置时钟中断
-- 在收到时钟中断后统计任务的使用时间片
-- 在时间片用完后，切换任务
-![bg right:58% 100%](figs/time-task-multiprog-os-detail.png)
+#### Coelophysis OS: time-sharing multitasking OS
+
+The Triassic "Coelophysis" operating system – Timesharing OS can completely preempt the execution of applications, so that multiple applications can be executed in a fair and efficient time-sharing manner, and the overall efficiency of the system can be improved.
+
+![bg right:50% 100%](figs/time-task-multiprog-os-detail.png)
+
 ---
-#### 时钟中断与计时器
-- 设置时钟中断
+
+#### The basic idea of time-sharing multitasking operating system
+- Set clock interrupt
+- Count the time slice used by the task after receiving the clock interrupt
+- After the time slice is used up, switch tasks
+![bg right:50% 100%](figs/time-task-multiprog-os-detail.png)
+---
+#### Clock Interrupts and Timers
+- set clock interrupt
 ```rust
 // os/src/sbi.rs
 pub fn set_timer(timer: usize) {
-     sbi_call(SBI_SET_TIMER, timer, 0, 0);
- }
+      sbi_call(SBI_SET_TIMER, timer, 0, 0);
+  }
 // os/src/timer.rs
 pub fn set_next_trigger() {
-    set_timer(get_time() + CLOCK_FREQ / TICKS_PER_SEC);
+     set_timer(get_time() + CLOCK_FREQ / TICKS_PER_SEC);
 }
 pub fn rust_main() -> ! {
-    trap::enable_timer_interrupt();
-    timer::set_next_trigger();
-}    
-```
-
-
----
-#### 抢占式调度
-
-```rust
-// os/src/trap/mod.rs trap_handler函数
-......
-match scause.cause() {
-    Trap::Interrupt(Interrupt::SupervisorTimer) => {
-        set_next_trigger();
-        suspend_current_and_run_next();
-    }
+     trap::enable_timer_interrupt();
+     timer::set_next_trigger();
 }
 ```
 
-这样我们就实现了分时多任务的腔骨龙操作系统
 
 ---
-### 小结
-- 多道程序&分时共享多任务
-- 协作式调度&抢占式调度
-- 任务与任务切换
-- 中断机制
+#### Preemptive Scheduling
+
+```rust
+// os/src/trap/mod.rs trap_handler function
+ …
+match cause. cause() {
+     Trap::Interrupt(Interrupt::SupervisorTimer) => {
+         set_next_trigger();
+         suspend_current_and_run_next();
+     }
+}
+```
+
+In this way, we have realized the time-sharing and multi-tasking Coelophysis operating system
 
 ---
+### Summary
+- Multiprogramming & time sharing multitasking
+- Cooperative Scheduling & Preemptive Scheduling
+- Task and task switching
+- Interrupt mechanism
 
-### 课程实验一
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
 
-* 创建实验提交仓库
-    * 清华git访问入口：[UniLab Platform](https://lab.cs.tsinghua.edu.cn/unilab/home)
-    * 学堂在线同学的[访问入口](https://www.yuque.com/xyong-9fuoz/qczol5/opl4y4#DiUQ0)(待补充)
-        * rCore、uCore-RV、uCore-x86
-* 实验任务
-    * 第三章：多道程序与分时多任务 -> chapter3练习 -> 获取任务信息 -> 增加一个系统调用`sys_task_info()`
-* 实验提交要求
-    * 任务布置后的第11天（2022年10月16日）；
+### Course Experiment 1
+
+* Create an experimental submission repository
+     * Tsinghua git access entrance: [UniLab Platform](https://lab.cs.tsinghua.edu.cn/unilab/home)
+     * [Access Entrance] (https://www.yuque.com/xyong-9fuoz/qczol5/opl4y4#DiUQ0) of XuetangX students (to be added)
+         * rCore, uCore-RV, uCore-x86
+* Experimental tasks
+     * Chapter 3: Multiprogramming and time-sharing multitasking -> chapter3 practice -> get task information -> add a system call `sys_task_info()`
+* Experiment submission requirements
+     * The 11th day after the task is assigned (October 16, 2022);

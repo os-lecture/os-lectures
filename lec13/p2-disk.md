@@ -11,103 +11,103 @@ backgroundColor: white
 <!-- theme: gaia -->
 <!-- _class: lead -->
 
-# 第十三讲 设备管理
-## 第二节 磁盘子系统
+# Lecture 13 Device Management
+## Section 2 Disk Subsystem
 
 ---
-### 磁盘 -- 概述
-磁盘工作机制和性能参数
+### Disk -- Overview
+Disk working mechanism and performance parameters
 ![w:700](figs/disk.png)
 
 
 ---
-### 磁盘 -- 概述
-磁盘 I/O 传输时间
+### Disk -- Overview
+Disk I/O transfer time
 ![w:1000](figs/disk-time1.png)
 
 
 
 ---
-### 磁盘 -- 概述
-磁盘 I/O 传输时间
+### Disk -- Overview
+Disk I/O transfer time
 ![w:1000](figs/disk-time2.png)
 
 
 ---
-### 磁盘 -- 概述
-磁盘 I/O 传输时间
+### Disk -- Overview
+Disk I/O transfer time
 ![w:1000](figs/disk-time3.png)
 
 
 ---
-### 磁盘 -- 概述
-磁盘 I/O 传输时间
+### Disk -- Overview
+Disk I/O transfer time
 ![w:1000](figs/disk-time4.png)
 
 
 ---
-### 磁盘 --磁盘调度算法
-通过优化磁盘访问请求顺序来提高磁盘访问性能
-- 寻道时间是磁盘访问最耗时的部分
-- 同时会有多个在同一磁盘上的 I/O 请求
-- 随机处理磁盘访问请求的性能表现很差
+### Disk --disk scheduling algorithm
+Improve disk access performance by optimizing the order of disk access requests
+- Seek time is the most time-consuming part of disk access
+- There will be multiple I/O requests on the same disk at the same time
+- Poor performance with random disk access requests
 
 
 ---
-### 磁盘 --磁盘调度算法  -- FIFO
+### Disk --disk scheduling algorithm -- FIFO
 ![w:900](figs/disk-fifo.png)
 
 ---
-### 磁盘 --磁盘调度算法  -- FIFO
-- 先进先出 (FIFO) 算法 
-- 按顺序处理请求
-- 公平对待所有进程
-- 在有很多进程的情况下，接近随机调度的性能
+### disk --disk scheduling algorithm -- FIFO
+- First in first out (FIFO) algorithm
+- Process requests sequentially
+- Fair treatment of all processes
+- Near random scheduling performance with many processes
 
 
 ---
-### 磁盘 --磁盘调度算法  -- 最短服务时间优先 (SSTF)
-- 选择从磁臂当前位置需要移动最少的 I/O 请求
-- 总是选择最短寻道时间
- ![w:750](figs/disk-sstf.png)
+### Disk -- Disk Scheduling Algorithm -- Shortest Service Time First (SSTF)
+- Choose the I/O request that requires the least movement from the arm's current position
+- Always choose the shortest seek time
+  ![w:550](figs/disk-sstf.png)
 
 
  
 ---
-### 磁盘 --磁盘调度算法  -- 扫描算法 (SCAN)
- ![w:750](figs/disk-scan.png)
+### Disk --disk scheduling algorithm -- scanning algorithm (SCAN)
+  ![w:750](figs/disk-scan.png)
 
 ---
-### 磁盘 --磁盘调度算法  -- 扫描算法 (SCAN)
-- 磁臂在一个方向上移动，访问所有未完成的请求
-- 直到磁臂到达该方向上最后的磁道，调换方向
-- 也称为电梯算法 (elevator algorithm)
+### Disk --disk scheduling algorithm -- scanning algorithm (SCAN)
+- The magnetic arm moves in one direction, accessing all outstanding requests
+- Until the arm reaches the last track in that direction, reverse direction
+- Also known as elevator algorithm (elevator algorithm)
 
 ---
-### 磁盘 --磁盘调度算法  -- 循环扫描算法 (C-SCAN)
-- 限制了仅在一个方向上扫描
-- 当最后一个磁道也被访问过了后，磁臂返回到磁盘的另外一端再次进行C-LOOK 算法
-- 磁臂先到达该方向上最后一个请求处，然后立即反转，而不是先到最后点路径上的所有请求
+### Disk --Disk Scheduling Algorithm -- Cyclic Scanning Algorithm (C-SCAN)
+- Restricted to scan in one direction only
+- When the last track has been accessed, the magnetic arm returns to the other end of the disk to perform the C-LOOK algorithm again
+- The magnetic arm goes to the last request in that direction first, then immediately reverses, instead of first going to all requests on the path of the last point
 
 
 ----
-### 磁盘 --磁盘调度算法  -- 循环扫描算法 (N-step-SCAN)
-- 磁头粘着 (Arm Stickiness) 现象
-   - SSTF、SCAN 及 CSCAN 等算法中，可能出现磁头停留在某处不动的情况
-- N 步扫描算法
-   - 将磁盘请求队列分成长度为 N 的子队列
-   - 按 FIFO 算法依次处理所有子队列
-   - 扫描算法处理每个队列
+### Disk --disk scheduling algorithm -- cycle scanning algorithm (N-step-SCAN)
+- Arm Stickiness phenomenon
+    - In algorithms such as SSTF, SCAN and CSCAN, the magnetic head may stay in a certain place
+- N-step scanning algorithm
+    - Divide the disk request queue into subqueues of length N
+    - Process all subqueues sequentially according to FIFO algorithm
+    - The scanning algorithm processes each queue
 
 
 ----
-### 磁盘 --磁盘调度算法  -- 双队列扫描算法 (FSCAN)
+### Disk --Disk Scheduling Algorithm -- Double Queue Scanning Algorithm (FSCAN)
 
-FSCAN 算法
-- 把磁盘 I/O 请求分成两个队列
-- 交替使用扫描算法处理一个队列
-- 新生成的磁盘 I/O 请求放入另一队列中
-- 所有的新请求都将被推迟到下一次扫描时处理
+FSCAN algorithm
+- Divide disk I/O requests into two queues
+- Alternately use the scanning algorithm to process a queue
+- Newly generated disk I/O requests are placed in another queue
+- All new requests will be deferred until the next scan
 
-FSCAN 算法是 N 步扫描算法的简化
-FSCAN 只将磁盘请求队列分成两个子队列
+The FSCAN algorithm is a simplification of the N-step scan algorithm
+FSCAN only splits the disk request queue into two subqueues

@@ -11,144 +11,160 @@ backgroundColor: white
 <!-- theme: gaia -->
 <!-- _class: lead -->
 
-# 第二讲 实践与实验介绍
-## 第三节 硬件启动与软件启动
+# Lecture 2 Introduction to Practice and Experiments
+## Section 3 Hardware Startup and Software Startup
 
 <br>
 <br>
 
-向勇 陈渝 李国良 
+Xiang Yong Chen Yu Li Guoliang
 
 <br>
 <br>
 
-2022年秋季
+Fall 2022
 
 ---
-提纲
+Outline
 
-### 1. RISC-V开发板
-2. QEMU启动参数和流程
-3. x86启动流程
+### 1. RISC-V development board
+2. QEMU startup parameters and process
+3. x86 boot process
 
 ---
-#### K210开发板
-- 基于RISC-V 64 多核处理器
+#### K210 Development Board
+- Based on RISC-V 64 multi-core processor
 ![w:450](figs/k210.png)
 
 ---
-#### 哪吒D1开发板
-- 基于RISC-V 64 单核处理器
+#### Nezha D1 development board
+- Based on RISC-V 64 single-core processor
 ![w:600](figs/d1.png)
 
 ---
-#### HiFive Unmatched 开发板（U740）
-- 基于RISC-V 64 多核处理器
+#### HiFive Unmatched Development Board (U740)
+- Based on RISC-V 64 multi-core processor
 ![w:1200](figs/sifive-hardware.png)
 
 ---
-提纲
+Outline
 
-1. RISC-V开发板
-### 2. QEMU启动参数和流程
-3. x86启动流程
-
----
-
-#### QEMU模拟器
-
-使用软件 qemu-system-riscv64 来模拟一台 64 位 RISC-V 架构的计算机，它包含:
-- 一个 CPU（可调整为多核）
-- 一块物理内存
-- 若干 I/O 外设
+1. RISC-V development board
+### 2. QEMU startup parameters and processes
+3. x86 boot process
 
 ---
-#### QEMU启动参数
+
+#### QEMU Emulator
+
+Use the software qemu-system-riscv64 to simulate a 64-bit RISC-V architecture computer, which contains:
+- A CPU (adjustable to multi-core)
+- A piece of physical memory
+- Several I/O peripherals
+
+---
+#### QEMU startup parameters
 ```
 qemu-system-riscv64 \
-    -machine virt \
-    -nographic \
-    -bios ../bootloader/rustsbi-qemu.bin \
-    -device loader,file=target/riscv64gc-unknown-none-elf/release/os.bin,addr=0x80200000
-``` 
-- machine virt 表示将模拟的 64 位 RISC-V 计算机设置为名为 virt 的虚拟计算机
-- 物理内存的默认大小为 128MiB 
+     -machine virt \
+     -nographic \
+     -bios ../bootloader/rustsbi-qemu.bin \
+     -device loader, file=target/riscv64gc-unknown-none-elf/release/os.bin, addr=0x80200000
+```
+- -machine virt means set up the simulated 64-bit RISC-V machine as a virtual machine named virt
+- The default size of physical memory is 128MiB
 
 ---
-#### QEMU启动参数
+#### QEMU startup parameters
 ```
 qemu-system-riscv64 \
-    -machine virt \
-    -nographic \
-    -bios ../bootloader/rustsbi-qemu.bin \
-    -device loader,file=target/riscv64gc-unknown-none-elf/release/os.bin,addr=0x80200000
-``` 
-- nographic 表示模拟器不需要提供图形界面，而只需要对外输出字符流
+     -machine virt \
+     -nographic \
+     -bios ../bootloader/rustsbi-qemu.bin \
+     -device loader, file=target/riscv64gc-unknown-none-elf/release/os.bin, addr=0x80200000
+```
+-nographic means that the emulator does not need to provide a graphical interface, but only needs to output character streams externally
 
 
 ---
-#### QEMU启动参数
+#### QEMU startup parameters
 ```
 qemu-system-riscv64 \
-    -machine virt \
-    -nographic \
-    -bios ../bootloader/rustsbi-qemu.bin \
-    -device loader,file=target/riscv64gc-unknown-none-elf/release/os.bin,addr=0x80200000
-``` 
-- bios 可以设置 QEMU 模拟器开机时用来初始化的引导加载程序（bootloader）
-- 这里使用预编译好的 rustsbi-qemu.bin
+     -machine virt \
+     -nographic \
+     -bios ../bootloader/rustsbi-qemu.bin\
+     -device loader, file=target/riscv64gc-unknown-none-elf/release/os.bin, addr=0x80200000
+```
+- -bios can set the bootloader (bootloader) used to initialize the QEMU emulator when it is powered on
+- Use precompiled rustsbi-qemu.bin here
 
 ---
-#### QEMU启动参数
+#### QEMU startup parameters
 ```
 qemu-system-riscv64 \
-    -machine virt \
-    -nographic \
-    -bios ../bootloader/rustsbi-qemu.bin \
-    -device loader,file=target/riscv64gc-unknown-none-elf/release/os.bin,addr=0x80200000
-``` 
-- device的loader 参数可以在 QEMU 模拟器开机之前将一个宿主机上的文件载入到 QEMU 的物理内存的指定位置中
-- file 和 addr 参数分别可以设置待载入文件的路径以及将文件载入到的 QEMU 物理内存上的物理地址
-
----
-#### QEMU启动流程
-
+     -machine virt \
+     -nographic \
+     -bios ../bootloader/rustsbi-qemu.bin\
+     -device loader, file=target/riscv64gc-unknown-none-elf/release/os.bin, addr=0x80200000
 ```
-qemu-system-riscv64 \
-    -machine virt \
-    -nographic \
-    -bios ../bootloader/rustsbi-qemu.bin \
-    -device loader,file=target/riscv64gc-unknown-none-elf/release/os.bin,addr=0x80200000
-``` 
-一般来说，计算机加电之后的启动流程可以分成若干个阶段，每个阶段均由一层软件负责，每一层软件的功能是进行它应当承担的初始化工作，并在此之后跳转到下一层软件的入口地址，也就是将计算机的控制权移交给了下一层软件。
+- The loader parameter of device can load a file on the host into the specified location of QEMU's physical memory before the QEMU emulator starts
+- The file and addr parameters can set the path of the file to be loaded and the physical address of the QEMU physical memory where the file is loaded
 
 ---
-#### QEMU启动流程
+#### QEMU startup process
 
 ```
 qemu-system-riscv64 \
-    -machine virt \
-    -nographic \
-    -bios ../bootloader/rustsbi-qemu.bin \
-    -device loader,file=target/riscv64gc-unknown-none-elf/release/os.bin,addr=0x80200000
-``` 
-QEMU 模拟的启动流程则可以分为三个阶段：
-1. 由固化在 [QEMU模拟的计算机内存](https://github.com/LearningOS/qemu/blob/386b2a5767f7642521cd07930c681ec8a6057e60/hw/riscv/virt.c#L59)中的[一小段汇编程序](https://github.com/LearningOS/qemu/blob/386b2a5767f7642521cd07930c681ec8a6057e60/hw/riscv/virt.c#L536)初始化并跳转执行bootloader；
-2. 由 bootloader 负责，初始化并加载OS，跳转OS执行；
-3. 由内核执行初始化工作。
+     -machine virt \
+     -nographic \
+     -bios ../bootloader/rustsbi-qemu.bin\
+     -device loader, file=target/riscv64gc-unknown-none-elf/release/os.bin, addr=0x80200000
+```
+Generally speaking, the startup process after the computer is powered on can be divided into several stages. Each stage is responsible for a layer of software. The function of each layer of software is to perform the initialization work it should undertake, and then jump to the next stage. The entry address of a layer of software, that is, the control of the computer is handed over to the next layer of software.
 
 ---
-提纲
 
-1. RISC-V开发板
-2. QEMU启动参数和流程
-### 3. x86启动流程
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+
+#### QEMU startup process
+
+```
+qemu-system-riscv64 \
+     -machine virt \
+     -nographic \
+     -bios ../bootloader/rustsbi-qemu.bin\
+     -device loader, file=target/riscv64gc-unknown-none-elf/release/os.bin, addr=0x80200000
+```
+The startup process of QEMU simulation can be divided into three stages:
+1. [Short piece of assembler program](https: //github.com/LearningOS/qemu/blob/386b2a5767f7642521cd07930c681ec8a6057e60/hw/riscv/virt.c#L536) initialize and jump to execute bootloader;
+2. The bootloader is responsible for initializing and loading the OS, and jumping to OS execution;
+3. Initialization is performed by the kernel.
 
 ---
-#### 真实计算机(x86)的启动流程
-实际上基于x86的PC的启动固件的引导流程从IBM PC机诞生第一天起，本质上就没有改变过。
+Outline
 
-1. Rom Stage：在这个阶段直接在ROM上运行BIOS代码；
-2. Ram Stage：在这个阶段在RAM上运行代码，检测并初始化芯片组、主板等；
-3. Bootloader Stage：在存储设备上找到Bootloader，加载执行Bootloader；
-4. OS Stage：Bootloader初始化外设，在存储设备上找到OS，加载执行OS。
+1. RISC-V development board
+2. QEMU startup parameters and process
+### 3. x86 startup process
+
+---
+
+<style scoped>
+{
+  font-size: 33px
+}
+</style>
+
+
+#### The boot process of a real computer (x86)
+In fact, the boot process of the startup firmware of the x86-based PC has not changed in essence since the first day of the birth of the IBM PC.
+
+1. Rom Stage: Run the BIOS code directly on the ROM at this stage;
+2. Ram Stage: Run code on RAM at this stage, detect and initialize chipset, motherboard, etc.;
+3. Bootloader Stage: Find the Bootloader on the storage device, load and execute the Bootloader;
+4. OS Stage: Bootloader initializes the peripherals, finds the OS on the storage device, loads and executes the OS.

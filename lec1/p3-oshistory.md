@@ -12,83 +12,83 @@ backgroundColor: white
 <!-- page_number: true -->
 <!-- _class: lead -->
 
-## 第一讲 操作系统概述
+## Lecture 1 Operating System Overview
 
-### 第三节 操作系统历史演化
-
-<br>
-<br>
-
-向勇 陈渝 李国良 
+### Section 3 Historical evolution of the operating system
 
 <br>
 <br>
 
-2022年秋季
+Xiang Yong Chen Yu Li Guoliang
+
+<br>
+<br>
+
+Fall 2022
 
 ---
 
-## 单用户系统
+## Single User System
 
-单用户系统 (1945-1955)
+Single User Systems (1945-1955)
 
-- **手动**连线/纸带传输进行程序输入
-- 机器成本远大于人力**成本**
-- **操作系统 = 装载器 + 程序库**
-- 问题：昂贵组件的**低利用率**
+- **Manual** wire/tape transfer for program entry
+- The machine cost is much greater than the labor **cost**
+- **OS = loader + libraries**
+- Problem: **Low utilization** of expensive components
 
-![bg right 100%](./figs/history-single-user-system.png)
-
----
-
-## 批处理系统
-
-批处理系统 (1955-1965)
-
-- **磁带/磁盘传输**进行程序输入
-- 机器成本大于人力成本
-- 操作系统 = 装载器 + **程序控制器 + 输出处理器**
-- 问题：相比以前利用率提高
-
-![bg right 90%](./figs/history-batch-processing.png)
+![bg right:40% width:520](./figs/history-single-user-system.png)
 
 ---
 
-## 批处理系统
+## Batch processing system
 
-**批处理**系统 (1955-1965)
+Batch systems (1955-1965)
 
-- 磁带/磁盘传输进行程序输入
-- 机器成本大于人力成本
-- 操作系统 = 装载器 + 程序控制器 + 输出处理器
-- 问题：相比以前利用率提高
+- **TAPE/DISK TRANSFER** for program input
+- Machine cost is greater than labor cost
+- Operating System = Loader + **Program Controller + Output Processor**
+- Problem: Increased utilization compared to before
 
-![bg right 100%](./figs/history-batch-process-graph.png)
-
----
-
-## 多道程序系统
-
-**多道**程序系统 (1955-1980)
-
-- 多个程序驻留**内存**中
-- 多个程序轮流使用 **CPU**
-- 操作系统 = 装载器 + **程序调度 + 内存管理** + 输出管理
-- 演变：相比以前利用率提高
-
-![bg right 100%](./figs/history-multiprogramming.png)
+![bg right:35% 100%](./figs/history-batch-processing.png)
 
 ---
 
-## 分时系统
+## Batch processing system
 
-分时系统 (1970- 至今)  
-- 多个程序驻留内存中  
-- 多个程序分时使用 CPU  
-- 操作系统 = 装载器 + 程序调度 + 内存管理 + **中断处理** +...  
-- 演变：相比以前利用率提高、与外界**交互延时**缩短
+**Batch Processing** Systems (1955-1965)
 
-![bg right 100%](./figs/history-timesharing.png)
+- Tape/disk transfer for program input
+- Machine cost is greater than labor cost
+- Operating system = loader + program controller + output processor
+- Problem: Increased utilization compared to before
+
+![bg right:35% 100%](./figs/history-batch-process-graph.png)
+
+---
+
+## Multiprogramming system
+
+**Multi-channel** programming system (1955-1980)
+
+- multiple programs reside in **memory**
+- Multiple programs take turns using **CPU**
+- OS = loader + **program scheduling + memory management** + output management
+- Evolution: Increased utilization compared to previous
+
+![bg right:35% 100%](./figs/history-multiprogramming.png)
+
+---
+
+## Time Sharing System
+
+Time Sharing System (1970-present)
+- Multiple programs reside in memory
+- Multiple programs time-sharing use of the CPU
+- Operating system = loader + program scheduling + memory management + **interrupt handling** +...
+- Evolution: Compared with the previous utilization rate, the interaction delay with the outside world is shortened
+
+![bg right:35% 100%](./figs/history-timesharing.png)
 
 ---
 ## Multics OS
@@ -101,78 +101,78 @@ backgroundColor: white
 ![](./figs/multics-intro.png)
 
 ---
-## 开放的UNIX
+## Open UNIX
 
 ![bg 50%](./figs/unix-family.png)
 
 
 ---
-## Linux家族
+## Linux family
 
-![bg 70%](./figs/linux-family.png)
-
----
-## 个人电脑
-
-个人电脑 (1981- )
-- 单用户
-- **计算机成本下降**使CPU利用率不再是最重要的关注点
-- 重点是**用户界面和多媒体功能**
-- 操作系统 = 装载器 + 程序调度 + 内存管理 + 中断处理 +...
-- 演变：**走向大众**，老的服务和功能不存在，越来越多的安全问题
-
-![bg right:35% 100%](./figs/history-pc.png)
+![bg 55%](./figs/linux-family.png)
 
 ---
-## MacOS家族
+## Personal computer
+
+Personal computer (1981- )
+- Single user
+- **Computer costs drop** so that CPU utilization is no longer a top concern
+- Focus on **User Interface and Multimedia Features**
+- Operating system = loader + program scheduling + memory management + interrupt handling +...
+- Evolution: **to the public**, old services and features don't exist, more and more security issues
+
+![bg right:20% 100%](./figs/history-pc.png)
+
+---
+## MacOS Family
 
 ![bg 55%](./figs/macos-family.png)
 
 ---
-## MacOS家族
+## MacOS Family
 
 ![bg 55%](./figs/macos-family-history.png)
 
 ---
-## Windows家族
+## Windows family
 
 ![bg 70%](./figs/windows-family.png)
 
 ---
-## 分布式系统
+## Distributed Systems
 
-**分布式**系统 (1990- )
-- 分布式多用户
-- 分布式系统利用率是关注点
-- 重点是网络/存储/计算的效率
-- 操作系统 = 分布式（装载器 + 程序/OS 调度 + 内存管理）
-- 演变：走向大众，走向**网络**，新的挑战 (不可靠/不确定)
+**Distributed** System (1990- )
+- Distributed multi-user
+- Distributed system utilization is a concern
+- The focus is on network/storage/compute efficiency
+- OS = distributed (loader + program/OS scheduling + memory management)
+- Evolution: to the public, towards **Internet**, new challenges (unreliable/uncertain)
 
-![bg right:40% 100%](./figs/history-ds.png)
+![bg right:30% 100%](./figs/history-ds.png)
 
 ---
-## Android操作系统
-- 跨平台：支持Java应用程序
-- 运行时(runtime)：Android虚拟机
-- 应用框架：简化应用程序开发
+##Android OS
+- Cross-platform: supports Java applications
+- Runtime (runtime): Android virtual machine
+- Application Framework: Simplifies application development
 
 
 ![bg right 80%](./figs/android-system-architecture.png)
 
 ---
-## AIoT操作系统
+## AIoT operating system
 
-AIoT 系统 (2000- )
-- 分布式**多设备**
-- 分布式系统利用率/可用性是关注点
-- 重点是网络/存储/计算的效率
-- 操作系统 = 分布式（程序/OS 调度 + 内存管理 + 安全/更新）
-- 演变：走向设备，走向网络，新的挑战 (不可靠/大数据)
+AIoT system (2000- )
+- Distributed **multi-device**
+- Distributed system utilization/availability is a concern
+- The focus is on network/storage/compute efficiency
+- OS = distributed (program/OS scheduling + memory management + security/updates)
+- Evolution: towards device, towards network, new challenges (unreliable/big data)
 
 
-![bg right:40% 100%](./figs/history-aiot.png)
+![bg right:28% 100%](./figs/history-aiot.png)
 
 ---
-## Fuchsia操作系统
+## Fuchsia OS
 
-![bg 75%](./figs/fuchsia-os-intro.png)
+![bg 65%](./figs/fuchsia-os-intro.png)

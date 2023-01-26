@@ -11,176 +11,206 @@ backgroundColor: white
 <!-- theme: gaia -->
 <!-- _class: lead -->
 
-## 第一讲 操作系统概述
-### 第一节 课程概述 & 教学安排
+## Lecture 1 Operating System Overview
+### Section 1 Course Overview & Teaching Arrangement
 
 <br>
 <br>
 
-向勇 陈渝 李国良 
+Xiang Yong Chen Yu Li Guoliang
 
 <br>
 <br>
 
-2022年秋季
+Fall 2022
 
 ---
 
-## 课程信息
+## Course Information
 
-### 主讲教师：
-  - 向勇
-  - 陈渝
+### Lecturer:
+  - Xiang Yong
+  - Chen Yu
 
-### 助教
-  - 闭浩扬、田凯夫、赵方亮、贺鲲鹏
+### Teaching Assistant
+  - Guan Haoyang, Tian Kaifu, Zhao Fangliang, He Kunpeng
 
 ---
 
-## 上课信息
+## Class Information
 
-### 上课时间地点
-- 星期三 上午第二大节 09:50-12:15 (1-16周) 
-- 地点
-   - 五教 5101
+### Class time and place
+- Wednesday morning second session 09:50-12:15 (1-16 weeks)
+- Place
+     - Five Teachings 5101
 
 ----
 
-## 预备知识
+## Preliminary knowledge
 
-### 程序设计语言（汇编、C 和 Rust）
- - :( 不是开发应用程序
- - :) 而是开发系统程序
+### Programming Languages (Assembly, C, and Rust)
+  - :( not a development app
+  - :) Instead develop system programs
 
-### 数据结构
- - :) 理解基本数据结构即可
-
----
-
-## 预备知识
-### 计算机组成原理
- - :( 刘总/康总的 RISC-V 原理
- - :) Patterson 的 RISC-V 原理
-
-### 编译原理
- - :) 没学过影响不大 
- - :( 但还是要了解高级语言 <–>RISC-V 汇编语言
-
+### data structure
+  - :) Just understand the basic data structure
 
 ---
 
-#### 课程参考
-- [课程幻灯片](https://www.yuque.com/docs/share/4c39608f-3051-4445-96ca-f3c018cb96c7)
-- 参考书
-  * [Operating Systems: Three Easy Pieces](https://pages.cs.wisc.edu/~remzi/OSTEP/)
-  - [深入了解计算机系统](https://hansimov.gitbook.io/csapp/)
-  - [RISC-V Reader中文版](http://riscvbook.com/chinese/RISC-V-Reader-Chinese-v2p1.pdf)
-#### 课程实践：rCore Tutorial Book v3
--  [课程实践参考书](https://learningos.github.io/rCore-Tutorial-Book-v3/)
--  [课程实践代码仓库](https://github.com/rcore-os/rCore-Tutorial-v3)
--  [课程实践代码的API文档](https://github.com/rcore-os/rCore-Tutorial-v3#os-api-docs)
+## Preliminary knowledge
+### Principles of computer composition
+  - :( Mr. Liu/Mr. Kang's RISC-V principle
+  - :) Patterson's RISC-V Principles
+
+### Compilation principle
+  - :) It doesn't affect much if you haven't learned it
+  - :( But still learn high level language <–>RISC-V assembly language
+
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Course Reference
+- [Course Slides](https://www.yuque.com/docs/share/4c39608f-3051-4445-96ca-f3c018cb96c7)
+- Reference books
+   * [Operating Systems: Three Easy Pieces](https://pages.cs.wisc.edu/~remzi/OSTEP/)
+   - [In-depth understanding of computer systems](https://hansimov.gitbook.io/csapp/)
+   - [RISC-V Reader Chinese version](http://riscvbook.com/chinese/RISC-V-Reader-Chinese-v2p1.pdf)
+#### Course Practice: rCore Tutorial Book v3
+- [Course Practice Reference Book](https://learningos.github.io/rCore-Tutorial-Book-v3/)
+- [Course Practice Code Warehouse](https://github.com/rcore-os/rCore-Tutorial-v3)
+- [API documentation for course practice code](https://github.com/rcore-os/rCore-Tutorial-v3#os-api-docs)
 
 ---
 
-### 实验指导
+### Experiment Guide
 
 
 #### uCore-RV-64
 
-* 基准代码仓库（[lab](https://github.com/uCore-RV-64/uCore-RV-64-lab)）
-* 文档仓库（[doc](https://github.com/uCore-RV-64/uCore-RV-64-doc)）
-* 在线文档[入口](https://ucore-rv-64.github.io/uCore-RV-64-doc/index.html)
-* 实验参考答案仓库（[answer](https://github.com/uCore-RV-64/uCore-RV-64-answer)）
-* 自动测试脚本仓库（[test](https://github.com/uCore-RV-64/uCore-RV-64-test)）
-* codespace开发环境配置脚本仓库（[config](https://github.com/uCore-RV-64/uCore-RV-64-conf)）
+* Benchmark code repository ([lab](https://github.com/uCore-RV-64/uCore-RV-64-lab))
+* Document repository ([doc](https://github.com/uCore-RV-64/uCore-RV-64-doc))
+* Online document [entry](https://ucore-rv-64.github.io/uCore-RV-64-doc/index.html)
+* Experimental reference answer repository ([answer](https://github.com/uCore-RV-64/uCore-RV-64-answer))
+* Automatic test script repository ([test](https://github.com/uCore-RV-64/uCore-RV-64-test))
+* Codespace development environment configuration script repository ([config](https://github.com/uCore-RV-64/uCore-RV-64-conf))
 
 ---
 
-### 实验指导
+### Experiment Guide
 
 #### rCore
-- [实验文档](https://github.com/LearningOS/rCore-Tutorial-Guide-2022S/)
-- [API文档](https://github.com/LearningOS/rCore-Tutorial-Guide-2022S/#os-api-docs-of-rcore-tutorial-code-2022s) , [实验代码](https://github.com/LearningOS/rCore-Tutorial-Code-2022S)
-- [测试用例](https://github.com/LearningOS/rCore-Tutorial-Test-2022S)
+- [Experimental Documentation](https://github.com/LearningOS/rCore-Tutorial-Guide-2022S/)
+- [API Documentation](https://github.com/LearningOS/rCore-Tutorial-Guide-2022S/#os-api-docs-of-rcore-tutorial-code-2022s), [Experimental Code](https:/ /github.com/LearningOS/rCore-Tutorial-Code-2022S)
+- [Test Cases](https://github.com/LearningOS/rCore-Tutorial-Test-2022S)
 
-#### uCore和rCore实验[讲解视频](https://www.yuque.com/docs/share/1b5b9260-8a80-4427-a612-78ec72b37e5f)
+#### uCore and rCore experiments [Explanation video] (https://www.yuque.com/docs/share/1b5b9260-8a80-4427-a612-78ec72b37e5f)
 
 ---
 
-
+<style scoped>
+{
+  font-size: 32px
+}
+</style>
 ![bg right 100%](figs/ucorearch.png)
 
 
-### OS 原理与设计思想
+### OS principles and design ideas
 
-* 操作系统结构
-* 中断及系统调用
-* 内存管理
-* 进程管理
-* 处理机调度
-* 同步互斥
-* 文件系统
-* I/O 子系统
+* Operating system structure
+* Interrupts and system calls
+* Memory management
+* Process management
+* Processor scheduling
+* Synchronization mutex
+* File system
+* I/O subsystem
 
 
 ---
+<style scoped>
+{
+  font-size: 32px
+}
+</style>
+## Homework and Experiments
 
-## 作业与实验
+### Homework
+   - Homework
 
-### 平时作业
-  - 课后练习
-
-### 基础实验
-  - 面向 RISC-V CPU 用 Rust/C 设计实现操作系统的功能
+### Basic Experiments
+   - Design and implement operating system functions in Rust/C for RISC-V CPU
  
-### 课程设计  
-  - 大实验
+### Course Design  
+   - Big experiment
 
 ---
-## 基础实验
-### 实验一：操作系统的基本支持
-### 实验二：地址空间
-### 实验三：进程管理与调度
-### 实验四：文件系统与进程间通信
-### 实验五：同步互斥
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+## Basic experiments
+### Experiment 1: Basic support of the operating system
+### Experiment 2: Address Space
+### Experiment 3: Process Management and Scheduling
+### Experiment 4: File system and inter-process communication
+### Experiment 5: Synchronizing Mutex
 
 
 ---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+## Curriculum Design (Big Experiment)
 
-## 课程设计（大实验）
+### Various operating system related functions and extensions
 
-### 各种操作系统相关的功能和扩展
+- OS porting on various CPU platforms
+   * RISC-V, x86-64, MIPS, ARM
+- Driver development for various development boards
+   * RaspBerry PI, U740, D1, etc.
+   * GUI, driver, file system, network
+- Perfection and improvement of the operating system kernel module
+   * Kernel loadable modules, microkernels
+   * Introduce asynchronous programming in the kernel
 
-- 多种CPU平台上的操作系统移植
-  * RISC-V、x86-64、MIPS、ARM
-- 多种开发板的驱动开发
-  * RaspBerry PI、U740、D1等
-  * GUI、驱动、文件系统、网络
-- 操作系统内核模块的完善和改进
-  * 内核可加载模块、微内核
-  * 在内核中引入异步编程
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+## grade evaluation
 
---- 
+### Select 1:
+   - Complete experiment 1 to experiment 5 on time: 30%
+   - Midterm Exam 30% + Final Exam 40% : 70%
+### Choice 2:
+   - Complete experiment 1 to experiment 5 within four weeks (2022 spring experiment): 30%
+   - Curriculum Design (i.e. Big Experiment): 70%
+     - Note: Students who choose the big experiment need to take the exam if they quit the course design later.
 
-## 成绩评定
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+## survey
 
-### 选择1： 
-  - 按时完成实验一至实验五：30% 
-  - 期中考试 30% + 期末考试 40% ：70%
-### 选择2： 
-  - 四周内完成实验一至实验五(2022春季实验)：30% 
-  - 课程设计（即大实验）：70%
-    - 注：选择大实验的同学如果后续退出课程设计，需参加考试。
+[Course Selection Questionnaire for 2022 Fall Semester Operating System Course](http://oscourse2019.mikecrm.com/fPozIRL) (Access password: XxW21Ur1CF)
 
---- 
-
-## 调查问卷
-
-[2022年秋季学期操作系统课选课问卷](http://oscourse2019.mikecrm.com/fPozIRL)（访问密码：XxW21Ur1CF）
-
-- 为什么要学这门课？ 
-- 你打算如何来学这门课？
-- 对自己的课程学习要求是什么？
-- 你愿意如实报告是否独立完成实验任务？
-- 你希望在操作系统课上学到什么知识和什么能力？
-- 以前的学习情况？
+- Why do you want to take this course?
+- How are you going to take this course?
+- What are the learning requirements for your own courses?
+- Are you willing to truthfully report whether you completed the experimental tasks independently?
+- What knowledge and ability do you hope to acquire in the operating system class?
+- Previous studies?

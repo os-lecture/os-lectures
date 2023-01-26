@@ -11,295 +11,320 @@ backgroundColor: white
 <!-- theme: gaia -->
 <!-- _class: lead -->
 
-# 第七讲 进程管理与单处理器调度
-### 第三节 实时调度
+# Lecture 7 Process Management and Single Processor Scheduling
+### Section 3 Real-time Scheduling
 
 <br>
 <br>
 
-向勇 陈渝 李国良 
+Xiang Yong Chen Yu Li Guoliang
 
-2022年秋季
-
----
-
-**提纲**
-
-### 1. 实时操作系统
-- 实时操作系统的定义
-- 实时任务
-2. 实时调度
-3. 优先级反置
+Fall 2022
 
 ---
-#### 实时操作系统的定义
-- 实时操作系统的定义
-  - 正确性依赖于其时间和功能两方面的操作系统
-- 实时操作系统的性能指标
-   - 时间约束的及时性（deadlines）
-   - 速度和平均性能相对不重要
-- 实时操作系统的特性
-  - 时间约束的可预测性
 
+**Outline**
+
+### 1. Real-time operating system
+- Definition of real-time operating system
+- Real-time tasks
+2. Real-time scheduling
+3. Priority inversion
 
 ---
-#### 实时操作系统分类
-- 强/硬实时操作系统
-   - 要求在指定的时间内必须完成重要的任务
-- 弱/软实时操作系统
-  - 重要进程有高优先级，要求尽量但非必须完成
+#### Definition of real-time operating system
+- Definition of real-time operating system
+   - Operating system whose correctness depends on both its timing and capabilities
+- Performance metrics for real-time operating systems
+    - Timeliness of time constraints (deadlines)
+    - Speed and average performance are relatively unimportant
+- Characteristics of real-time operating systems
+   - Predictability of time constraints
 
 
 ---
-#### 实时任务
-- 任务（工作单元）
-  - 一次计算，一次文件读取，一次信息传递等等
-- 任务属性
-  - 完成任务所需要的资源
-  - 定时参数
+#### Real-Time Operating System Classification
+- Hard/hard real-time operating system
+    - It is required that important tasks must be completed within the specified time
+- weak/soft RTOS
+   - Important processes have high priority and are required to be completed as much as possible but not necessarily
 
-![w:1100](figs/rt-task.png)
 
 ---
-#### 周期实时任务
-- 周期实时任务：一系列相似的任务
-  - 任务有规律地重复
-  - 周期p = 任务请求时间间隔 (0 <p)
-  - 执行时间e = 最大执行时间(0 < e < p)
-  - 使用率U = e/p
+#### Real-time tasks
+- Task (unit of work)
+   - One calculation, one file read, one message transfer, etc.
+- Task properties
+   - The resources needed to complete the task
+   - Timing parameters
+
+![w:1000](figs/rt-task.png)
+
+---
+#### Periodic real-time tasks
+- Periodic real-time tasks: a series of similar tasks
+   - Quests repeat regularly
+   - period p = task request interval (0 <p)
+   - execution time e = maximum execution time (0 < e < p)
+   - Utilization U = e/p
 ![w:900](figs/rt-task-2.png)
-- 可调度：if $\sum_{p_i} \frac{e_i}{p_i}\leq 1$; otherwise 不可调度
+- Schedulable: if $\sum_{p_i} \frac{e_i}{p_i}\leq 1$; otherwise not schedulable
 
 ---
-#### 软时限和硬时限
-- 硬时限（Hard deadline）
-  - 错过任务时限会导致灾难性或非常严重的后果
-  - 必须验证，在最坏情况下能够满足时限
-- 软时限(Soft deadline)
-  - 通常能满足任务时限
-  - 如有时不能满足，则降低要求
-  - 尽力保证满足任务时限
+#### Soft time limit and hard time limit
+- Hard deadline
+   - Missing mission deadlines can have catastrophic or very serious consequences
+   - It must be verified that the time limit can be met in the worst case
+- Soft deadline
+   - Usually meets mission deadlines
+   - Reduce requirements if sometimes not met
+   - Do your best to meet the task time limit
 
 ---
-####  可调度性
-- 可调度表示一个实时操作系统能够满足任务时限要求
-   - 需要确定实时任务的执行顺序
-   - **静态**优先级调度：任务执行过程中**不会**改变任务的优先级
-   - **动态**优先级调度：任务执行过程中**会**改变任务的优先级
-![w:900](figs/rt-task-3.png)
+#### Schedulability
+- Schedulable means that an RTOS can meet task deadlines
+    - Need to determine the execution order of real-time tasks
+    - **Static** priority scheduling: **will not** change the priority of the task during task execution
+    - **Dynamic** priority scheduling: **will** change the priority of tasks during task execution
+![w:750](figs/rt-task-3.png)
 
 
 ---
 
-**提纲**
+**Outline**
 
-1. 实时操作系统
-### 2. 实时调度
-- 速率单调调度算法
-- 最早截止时间优先算法
-- 最低松弛度优先算法
-3. 优先级反置
-
----
-####  实时调度
-- **静态**优先级调度：速率单调调度算法(RM, Rate Monotonic) 
-  - 通过周期安排优先级
-  - 周期越短优先级越高
-  - 执行周期最短的任务
-
-- **动态**优先级调度：最早截止时间优先算法 (EDF, Earliest Deadline First) 
-  - 截止时间越早优先级越高
-  - 执行离截止时间最近的任务
-
-如果任务间有**共享资源占用**的情况，高优先级任务可能会被延误执行！
+1. Real-time operating system
+### 2. Real-time scheduling
+- Rate monotonic scheduling algorithm
+- Earliest deadline first algorithm
+- Lowest slack first algorithm
+3. Priority inversion
 
 ---
-#### 速率单调调度算法(RM, Rate Monotonic) 
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
 
-- 根据任务周期来确定任务优先级（周期越短优先级越高，抢占式）
+#### Real-time scheduling
+- **Static** Priority Scheduling: Rate Monotonic Scheduling Algorithm (RM, Rate Monotonic)
+   - Prioritize by cycle
+   - The shorter the period, the higher the priority
+   - Execute the task with the shortest period
 
-- 进程P1：e=20 p=50
-- 进程P2：e=35 p=100
+- **Dynamic** Priority Scheduling: Earliest Deadline First Algorithm (EDF, Earliest Deadline First)
+   - The earlier the deadline, the higher the priority
+   - Execute the task closest to the deadline
+
+If there is **shared resource occupation** between tasks, high priority tasks may be delayed!
+
+---
+#### Rate Monotonic Scheduling Algorithm (RM, Rate Monotonic)
+
+- Determine the task priority according to the task period (the shorter the period, the higher the priority, preemptive)
+
+- Process P1: e=20 p=50
+- Process P2: e=35 p=100
 
 ![w:900](figs/ddsl1.gif)
 
 
 ---
-#### 速率单调调度算法(RM, Rate Monotonic) 
+#### Rate Monotonic Scheduling Algorithm (RM, Rate Monotonic)
 
-- 根据任务周期来确定任务优先级（周期越短优先级越高，抢占式）
+- Determine the task priority according to the task period (the shorter the period, the higher the priority, preemptive)
 
-- 进程P1：e=25 p=50
-- 进程P2：e=35 p=80
+- Process P1: e=25 p=50
+- Process P2: e=35 p=80
 
 ![w:900](figs/ddsl2.gif)
 
 ---
 
-#### 最早截止时间优先算法 (EDF, Earliest Deadline First) 
+#### Earliest Deadline First Algorithm (EDF, Earliest Deadline First)
 
-- 固定优先级的问题：有的任务可能错过期限
+- Fixed priority issue: some tasks could miss the deadline
 
 
-- 进程P1：e=10 p=20
-- 进程P2：e=25 p=50
+- Process P1: e=10 p=20
+- Process P2: e=25 p=50
 
 ![w:1000](figs/edf1.png)
 
 ---
 
-#### 最早截止时间优先算法 (EDF, Earliest Deadline First) 
+#### Earliest Deadline First Algorithm (EDF, Earliest Deadline First)
 
-- 固定优先级的问题：有的任务可能错过期限
-
-
-- 进程P1：e=10 p=20
-- 进程P2：e=25 p=50
-
-![w:1000](figs/edf2.png)
+- Fixed priority issue: some tasks could miss the deadline
 
 
----
+- Process P1: e=10 p=20
+- Process P2: e=25 p=50
 
-#### 最早截止时间优先算法 (EDF, Earliest Deadline First) 
-
-- 固定优先级的问题：有的任务可能错过期限
-
-
-- 进程P1：e=10 p=20
-- 进程P2：e=25 p=50
-
-![w:1000](figs/edf3.png)
-
----
-
-#### 最早截止时间优先算法 (EDF, Earliest Deadline First) 
-
-- 任务的优先级根据任务的截止时间动态分配。截止时间越短，优先级越高。
-
-- 进程P1：e=10 p=20
-- 进程P2：e=25 p=50
-
-![w:1000](figs/edf4.png)
-
----
-
-#### 最低松弛度优先算法（LLF）
-
-- 根据**任务紧急或者松弛程度**，来确定任务优先级
-
-- 任务紧急度越高，优先级越高
-
-- 松弛度=必须完成时间-本身还需要运行时间-当前时间
-
-- 进程P1：e=10 p=20；进程P2：e=25 p=50
-
-![w:1000](figs/llf2.png)
-
+![w:900](figs/edf2.png)
 
 
 ---
 
-**提纲**
+#### Earliest Deadline First Algorithm (EDF, Earliest Deadline First)
 
-1. 实时操作系统
-2. 实时调度
-### 3. 优先级反置
-- 优先级继承
-- 优先级天花板协议
-
----
-####  优先级反置(Priority Inversion)
-
-高优先级进程长时间等待低优先级进程所占用资源的现象
-
-- 基于优先级的可抢占调度算法存在优先级反置问题
-优先级：T1>T2>T3
-![w:800](figs/rt-pi.png)
+- Fixed priority issue: some tasks could miss the deadline
 
 
+- Process P1: e=10 p=20
+- Process P2: e=25 p=50
 
----
-####  优先级反置(Priority Inversion)
-
-高优先级进程长时间等待低优先级进程所占用资源的现象
-
-- 基于优先级的可抢占调度算法存在优先级反置问题
-优先级：T1>T2>T3
-![w:800](figs/priority1.png)
-
-
----
-####  优先级继承（Priority Inheritance)
-- 占用资源的低优先级进程继承申请资源的高优先级进程的优先级
-- 只在占有资源的低优先级进程被阻塞时,才提高占有资源进程的优先级
-![w:800](figs/priority2.png)
-
-
-
-
----
-####  优先级继承（Priority Inheritance)
-- 占用资源的低优先级进程继承**申请资源的高优先级进程的优先级**
-- 只在占有资源的低优先级进程被阻塞时,才提高占有资源进程的优先级
-![w:600](figs/rt-pi-1.png)
-注：临界区：互斥访问共享资源的代码片段
-
-
----
-####  优先级继承（Priority Inheritance)
-- 占用资源的低优先级进程继承申请资源的高优先级进程的优先级
-- 只在占有资源的低优先级进程被阻塞时,才提高占有资源进程的优先级
-![w:600](figs/rt-pi-2.png)
-注：临界区：互斥访问共享资源的代码片段
-
-
----
-####  优先级继承（Priority Inheritance)
-- 占用资源的低优先级进程继承申请资源的高优先级进程的优先级
-- 只在占有资源的低优先级进程被阻塞时,才提高占有资源进程的优先级
-![w:700](figs/rt-pi-3.png)
-注：临界区：互斥访问共享资源的代码片段
-
-
----
-####  优先级继承（Priority Inheritance)
-- 占用资源的低优先级进程继承申请资源的高优先级进程的优先级
-- 只在占有资源的低优先级进程被阻塞时,才提高占有资源进程的优先级
-
-![w:650](figs/rt-pi-4.png)
-注：临界区：互斥访问共享资源的代码片段
-
----
-####  优先级继承（Priority Inheritance)
-- 占用资源的低优先级进程继承申请资源的高优先级进程的优先级
-- 只在占有资源的低优先级进程被阻塞时,才提高占有资源进程的优先级
-
-![w:650](figs/rt-pi-5.png)
-注：临界区：互斥访问共享资源的代码片段
-
-
----
-####  优先级继承（Priority Inheritance)
-- 占用资源的低优先级进程继承申请资源的高优先级进程的优先级
-- 只在占有资源的低优先级进程被阻塞时,才提高占有资源进程的优先级
-
-![w:650](figs/rt-pi-6.png)
-注：临界区：互斥访问共享资源的代码片段
-
----
-#### 优先级天花板协议（priority ceiling protocol）
-- 占用资源进程的优先级与所有可能申请该资源的进程的最高优先级相同
-  - 不管是否发生等待,都提升占用资源进程的优先级
-  - 优先级高于系统中所有被锁定的资源的优先级上限，任务执行临界区时就不会被阻塞
+![w:850](figs/edf3.png)
 
 ---
 
-### 小结
+#### Earliest Deadline First Algorithm (EDF, Earliest Deadline First)
 
-1. 实时操作系统
-- 实时操作系统的定义、实时任务
-2. 实时调度
-- 速率单调调度算法、最早截止时间优先算法、最低松弛度优先算法
-3. 优先级反置
-- 优先级继承、优先级天花板协议
+- The priority of the task is dynamically assigned according to the deadline of the task. The shorter the deadline, the higher the priority.
+
+- Process P1: e=10 p=20
+- Process P2: e=25 p=50
+
+![w:800](figs/edf4.png)
+
+---
+
+#### Lowest Laxity First Algorithm (LLF)
+
+- Determine task priority according to **task urgency or slack level**
+
+- The higher the urgency of the task, the higher the priority
+
+- Slack = must complete time - itself still needs to run time - current time
+
+- Process P1: e=10 p=20; Process P2: e=25 p=50
+
+![w:800](figs/llf2.png)
+
+
+
+---
+
+**Outline**
+
+1. Real-time operating system
+2. Real-time scheduling
+### 3. Priority inversion
+- priority inheritance
+- Priority Ceiling Agreement
+
+---
+#### Priority Inversion
+
+The phenomenon that a high-priority process waits for a long time for resources occupied by a low-priority process
+
+- There is a priority inversion problem in the priority-based preemptive scheduling algorithm
+Priority: T1>T2>T3
+![w:600](figs/rt-pi.png)
+
+
+
+---
+#### Priority Inversion
+
+The phenomenon that a high-priority process waits for a long time for resources occupied by a low-priority process
+
+- There is a priority inversion problem in the priority-based preemptive scheduling algorithm
+Priority: T1>T2>T3
+![bg right:50% 100%](figs/priority1.png)
+
+
+---
+#### Priority Inheritance
+- Low-priority processes that occupy resources inherit the priority of high-priority processes that request resources
+- Raise the priority of the resource-holding process only when the low-priority process holding the resource is blocked
+![bg right:50% 100%](figs/priority2.png)
+
+
+
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Priority Inheritance
+- Low-priority processes that occupy resources inherit the priority of high-priority processes that apply for resources**
+- Raise the priority of the resource-holding process only when the low-priority process holding the resource is blocked
+![bg right:45% 100%](figs/rt-pi-1.png)
+Note: Critical section: a code fragment that mutually exclusive accesses shared resources
+
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Priority Inheritance
+- Low-priority processes that occupy resources inherit the priority of high-priority processes that request resources
+- Raise the priority of the resource-holding process only when the low-priority process holding the resource is blocked
+![bg right:45% 100%](figs/rt-pi-2.png)
+Note: Critical section: a code fragment that mutually exclusive accesses shared resources
+
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Priority Inheritance
+- Low-priority processes that occupy resources inherit the priority of high-priority processes that request resources
+- Raise the priority of the resource-holding process only when the low-priority process holding the resource is blocked
+![bg right:45% 100%](figs/rt-pi-3.png)
+Note: Critical section: a code fragment that mutually exclusive accesses shared resources
+
+
+---
+#### Priority Inheritance
+- Low-priority processes that occupy resources inherit the priority of high-priority processes that request resources
+- Raise the priority of the resource-holding process only when the low-priority process holding the resource is blocked
+
+![bg right:50% 100%](figs/rt-pi-4.png)
+Note: Critical section: a code fragment that mutually exclusive accesses shared resources
+
+---
+#### Priority Inheritance
+- Low-priority processes that occupy resources inherit the priority of high-priority processes that request resources
+- Raise the priority of the resource-holding process only when the low-priority process holding the resource is blocked
+
+![bg right:50% 100%](figs/rt-pi-5.png)
+Note: Critical section: a code fragment that mutually exclusive accesses shared resources
+
+
+---
+#### Priority Inheritance
+- Low-priority processes that occupy resources inherit the priority of high-priority processes that request resources
+- Raise the priority of the resource-holding process only when the low-priority process holding the resource is blocked
+
+![bg right:50% 100%](figs/rt-pi-6.png)
+Note: Critical section: a code fragment that mutually exclusive accesses shared resources
+
+---
+#### Priority ceiling protocol
+- The priority of the resource-occupied process is the same as the highest priority of all processes that may apply for the resource
+   - Regardless of whether waiting occurs or not, the priority of resource-occupied processes is increased
+   - The priority is higher than the priority upper limit of all locked resources in the system, and the task will not be blocked when executing the critical section
+
+---
+<style scoped>
+{
+  font-size: 32px
+}
+</style>
+### Summary
+
+1. Real-time operating system
+- Definition of real-time operating system, real-time tasks
+2. Real-time scheduling
+- Rate monotonic scheduling algorithm, earliest deadline first algorithm, lowest slack first algorithm
+3. Priority inversion
+- Priority inheritance, priority ceiling protocol

@@ -11,405 +11,441 @@ backgroundColor: white
 <!-- theme: gaia -->
 <!-- _class: lead -->
 
-## 第一讲 操作系统概述
+## Lecture 1 Operating System Overview
 
-### 第五节 实践：试试UNIX/Linux
-
-<br>
-<br>
-
-向勇 陈渝 李国良 
+### Section 5 Practice: Try UNIX/Linux
 
 <br>
 <br>
 
-2022年秋季
+Xiang Yong Chen Yu Li Guoliang
+
+<br>
+<br>
+
+Fall 2022
 
 ---
-## UNIX/Linux在哪里？
+## Where is UNIX/Linux?
 
-- Linux 
-   - Ubuntu、Fedora、SuSE、openEuler 
-   - 麒麟  统信  
+- Linux
+    - Ubuntu, Fedora, SuSE, openEuler
+    - Kirin Tongxin
 - Windows with WSL (Windows Subsystem of Linux)
-- MacOS with UNIX shell 
+-MacOS with UNIX shell
 ---
-## 为什么是Linux？
-- 开放源码，有很好的文档，设计简洁，使用广泛
-- 如果你了解Linux的内部情况，学习ucore/rcore会有帮助。
+## Why Linux?
+- Open source, well documented, clean design, widely used
+- Learning ucore/rcore will help if you know Linux internals.
 
 ---
 ## Try Linux
 
-- shell
-   - bash, fish, zsh, starship ...
+-shell
+    - bash, fish, zsh, starship...
 
 - program
-   - ls, rm，gcc，gdb, vim ...
+    - ls, rm, gcc, gdb, vim...
 
 ---
-## Linux内核通常提供哪些服务？
+## What services does the Linux kernel usually provide?
 
-  * 进程（一个正在运行的程序）
-  * 内存分配
-  * 文件内容
-  * 文件名、目录
-  * 访问控制（安全）
-  * 许多其他的：用户、IPC、网络、时间、终端
+   * Process (a running program)
+   * Memory allocation
+   * Document content
+   * File name, directory
+   * Access Control (Security)
+   * Many others: user, IPC, network, time, endpoint
 
-
----
-## Linux内核提供的应用程序/内核接口？
-
-  * "系统调用"
-  * 例子，用C语言，来自UNIX（例如Linux、macOS、FreeBSD）。
-
-            fd = open("out", 1);
-            write(fd, "hello\n", 6);
-            pid = fork()
-
- *  这些看起来像函数调用，但它们并不是
- *  核心的系统调用数量并不多（20个左右）
 
 ---
-## Linux内核提供的应用程序/内核接口？
+## The application/kernel interface provided by the Linux kernel?
 
-| 系统调用名 | 含义 |
+   * "System call"
+   * Examples, in C, from UNIX (e.g. Linux, macOS, FreeBSD).
+
+             fd = open("out", 1);
+             write(fd, "hello\n", 6);
+             pid = fork()
+
+  * These look like function calls, but they are not
+  * The number of core system calls is not large (about 20)
+
+---
+## The application/kernel interface provided by the Linux kernel?
+
+<style scoped>
+table {
+  font-size: 25px;
+}
+</style>
+
+| System call name | Meaning |
 | ------------------------ | ---- |
-| ``int fork()``           |  创建一个进程，返回子进程的PID。    |
-| ``int exit(int status)`` | 终止当前进程；报告状态给执行wait()系统调用的父进程。没有返回。     |
-| ``int wait(int *status)``    |  等待子进程退出；退出状态为 ``*status`` ；返回子进程的PID。    |
-| ``int kill (int pid)``           |   终止进程号为PID的进程。返回0表示成功，或-1表示错误。    |
-| ``int getpid()``             |   返回当前进程的PID。   |
+| ``int fork()`` | Create a process and return the PID of the child process. |
+| ``int exit(int status)`` | Terminate the current process; report the status to the parent process that executes the wait() system call. Nothing is returned. |
+| ``int wait(int *status)`` | Wait for the child process to exit; the exit status is ``*status``; return the PID of the child process. |
+| ``int kill (int pid)`` | Terminate the process whose process ID is PID. Returns 0 for success, or -1 for error. |
+| ``int getpid()`` | Returns the PID of the current process. |
 
 ---
-## Linux内核提供的应用程序/内核接口？
+## The application/kernel interface provided by the Linux kernel?
 
-| 系统调用名 | 含义 |
+<style scoped>
+table {
+  font-size: 28px;
+}
+</style>
+
+| System call name | Meaning |
 | ------------------------ | ---- |
-| ``int sleep(int n)``                         | 暂停n个时钟周期。     |
-| ``int exec(char *file，char *argv[])``   |  用参数加载文件并执行；仅当出错时返回。    |
-|   ``char *sbrk(int n)``   |  将进程内存增加n个字节。返回新内存的开始地址。    |
-|   ``int open(char *file，int flags)``   |  打开文件；标志flag表示文件操作的读/写属性；返回一个fd(文件描述符)。    |
-|   ``int write(int fd，char *buf，int n)``   |  从buf向文件描述符fd写入n个字节；返回n。    |
+| ``int sleep(int n)`` | Pause for n clock cycles. |
+| ``int exec(char *file, char *argv[])`` | Load file with arguments and execute; return only on error. |
+| ``char *sbrk(int n)`` | Increase process memory by n bytes. Returns the start address of the new memory. |
+| ``int open(char *file, int flags)`` | Open the file; the flag indicates the read/write attribute of the file operation; return a fd (file descriptor). |
+| ``int write(int fd, char *buf, int n)`` | Write n bytes from buf to file descriptor fd; return n. |
 
 ---
-## Linux内核提供的应用程序/内核接口？
+## The application/kernel interface provided by the Linux kernel?
 
-| 系统调用名 | 含义 |
+<style scoped>
+table {
+  font-size: 28px;
+}
+</style>
+
+| System call name | Meaning |
 | ------------------------ | ---- |
-|  ``int read(int fd，char *buf，int n)``   |    将n个字节读入buf；返回读取的数字；如果文件结束，则为0。   |
-|  ``int close(int fd)``   |  释放打开的描述符为fd的文件。    |
-|  ``int dup(int fd)``  |  返回一个新的文件描述符，引用与文件描述符相同的文件。    |
-|  ``int pipe(int p[])``   |  创建一个管道，将读/写文件描述符放在p[0]和p[1]中。    |
-|  ``int chdir(char *dir)``     | 更改当前目录。|
+| ``int read(int fd, char *buf, int n)`` | Read n bytes into buf; return the number read, or 0 if end-of-file. |
+| ``int close(int fd)`` | Release the open file with descriptor fd. |
+| ``int dup(int fd)`` | Returns a new file descriptor referencing the same file as the file descriptor. |
+| ``int pipe(int p[])`` | Creates a pipe with read/write file descriptors in p[0] and p[1]. |
+| ``int chdir(char *dir)`` | Change the current directory. |
 
 ---
-## Linux内核提供的应用程序/内核接口？
+## The application/kernel interface provided by the Linux kernel?
 
-| 系统调用名 | 含义 |
+<style scoped>
+table {
+  font-size: 28px;
+}
+</style>
+
+| System call name | Meaning |
 | ------------------------ | ---- |
-|  ``int mkdir(char *dir) ``     |  创建一个新目录。    |
-| ``int mknod(char *file, int, int)``  |  创建一个设备文件。    |
-|  ``int fstat(int fd, struct stat *st)``    | 将文件fd的元信息放入 ``*st``     |
-|   ``int stat(char *file, struct stat *st)``   | 将文件 ``*file`` 的元信息放入 ``*st``     |
-| ``int link(char *file1，char *file2)``    |   为文件file1创建另一个名称(file2)。    |
-| ``int unlink(char *file)``    |   删除文件。    |
+| ``int mkdir(char *dir) `` | Create a new directory. |
+| ``int mknod(char *file, int, int)`` | Create a device file. |
+| ``int fstat(int fd, struct stat *st)`` | put the meta information of file fd into ``*st`` |
+| ``int stat(char *file, struct stat *st)`` | Put the meta information of the file ``*file`` into ``*st`` |
+| ``int link(char *file1, char *file2)`` | Create another name (file2) for the file file1. |
+| ``int unlink(char *file)`` | Delete a file. |
 
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
-[分析一些非常简单的小程序](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/)
+[Analysis of some very simple small programs](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/)
 
-#### 进程相关
+#### Process related
 
-fork.c  exec.c  forkexec.c ...
-#### 文件系统相关
-list.c  open.c echo.c  copy.c  ... 
-#### 进程间通信相关
- pipe1.c  pipe2.c  redirect.c ...
+fork.c exec.c forkexec.c ...
+#### File system related
+list.c open.c echo.c copy.c ...
+#### Inter-process communication related
+  pipe1.c pipe2.c redirect.c ...
 
 ---
-## 分析UNIX/Linux类应用
- 例如：[copy.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/copy.c)，将输入复制到输出
-从输入中读取字节，将其写入输出中
+## Analyze UNIX/Linux applications
+  For example: [copy.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/copy.c), copy input to output
+read bytes from input, write them to output
 
-        $ copy
+         $ copy
 
-  copy.c是用C语言编写的
+   copy.c is written in C language
     
-  read()和write()是系统调用
-  read()/write()第一个参数是"文件描述符"(fd)
-  传递给内核，告诉它要读/写哪个 "打开的文件"。
+   read() and write() are system calls
+   The first parameter of read()/write() is "file descriptor" (fd)
+   Passed to the kernel to tell it which "open file" to read/write.
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
-必须先前已经打开过的一个FD（描述符）连接到一个文件/设备/socket
-一个进程可以打开许多文件，有许多描述符
-UNIX惯例：FD： 0是 "标准输入"，1是 "标准输出"
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+An FD (descriptor) that must have been previously opened is connected to a file/device/socket
+A process can have many files open, with many descriptors
+UNIX convention: FD: 0 is "standard input", 1 is "standard output"
 
 
-read()第二个参数是一个指针，指向要读入的一些内存。
+The second parameter of read() is a pointer to some memory to be read.
 
-read()第三个参数是要读取的最大字节数
+The third parameter of read() is the maximum number of bytes to read
 
-注：read()可以少读，但不能多读
-
-
----
-## 分析UNIX/Linux类应用
-
-返回值：实际读取的字节数，或者-1表示错误
-注意：copy.c并不关心数据的格式。
-UNIX的I/O是8位字节
-解释是特定于应用的，例如数据库记录、C源码等
-文件描述符从何而来？
+Note: read() can read less, but not more
 
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
-例如：[open.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/open.c)，创建一个文件
-
-    $ open
-    $ cat output.txt
-
-open() 创建一个文件，返回一个文件描述符（或-1表示错误）。
-FD是一个小整数，FD索引到一个由内核维护的每进程表中
-
-不同的进程有不同的FD命名空间。例如，FD 1对不同的进程意味不同
-
-进一步细节可以参考UNIX手册，例如 "man 2 open"。 
-man 1是shell命令如ls；man 2是系统调用如open；man 3是函数说明
-
----
-## 分析UNIX/Linux类应用
-
-当程序调用open()这样的系统调用时会发生什么？
-
-- 看起来像一个函数调用，但它实际上是一个特殊的指令
-- 硬件保存了一些用户寄存器
-- 硬件提高权限级别
-- 硬件跳转到内核中一个已知的 "入口点"
-- 现在在内核中运行C代码
+Return value: the actual number of bytes read, or -1 for an error
+Note: copy.c doesn't care about the format of the data.
+UNIX I/O is 8-bit bytes
+Interpretation is application specific, e.g. database records, C source code, etc.
+Where do file descriptors come from?
 
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
-当程序调用open()这样的系统调用时会发生什么？
+For example: [open.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/open.c), create a file
 
-- 内核调用系统调用实现
-- open() 在文件系统中查找名字
-- 它可能会等待磁盘的到来
-- 更新内核数据结构（缓存，FD表）
-- 恢复用户寄存器
-- 降低权限级别
-- 跳回程序中的调用点，继续运行
-- 我们将在后面的课程中看到更多的细节
+     $ open
+     $ cat output.txt
 
----
-## 分析UNIX/Linux类应用
+open() creates a file, returning a file descriptor (or -1 on error).
+FD is a small integer, and FD is indexed into a per-process table maintained by the kernel
 
-在向UNIX的命令行界面（shell）输入信息。
-shell打印出"$"的提示。
-shell让你运行UNIX的命令行工具
-对系统管理、处理文件、开发和编写脚本很有用
+Different processes have different FD namespaces. For example, FD 1 means different things to different processes
 
-    $ ls
-    $ ls > out
-    $ grep x < out
+Further details can be found in UNIX manuals, eg "man 2 open".
+man 1 is a shell command such as ls; man 2 is a system call such as open; man 3 is a function description
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
-但通过shell来支持分时共享多任务执行是UNIX设计之初的重点。
-可以通过shell行使许多系统调用。
+What happens when a program calls a system call like open()?
 
-shell为你输入的每个命令创建一个新的进程，例如，对于
-
-    $ echo hello
-
+- looks like a function call, but it's actually a special instruction
+- The hardware saves some user registers
+- Hardware elevated privilege level
+- hardware jump to a known "entry point" in the kernel
+- Now run C code in the kernel
 
 
 ---
+## Analyze UNIX/Linux applications
+
+What happens when a program calls a system call like open()?
+
+- Kernel call system call implementation
+- open() looks up the name in the filesystem
+- it may wait for the disk to arrive
+- Update kernel data structures (cache, FD table)
+- restore user registers
+- Lower the permission level
+- Jump back to the calling point in the program and continue running
+- We will see more details in later lessons
+
+---
+## Analyze UNIX/Linux applications
+
+Input information to the UNIX command line interface (shell).
+The shell prints a "$" prompt.
+The shell lets you run UNIX command-line tools
+Useful for system administration, working with files, developing and writing scripts
+
+     $ ls
+     $ ls > out
+     $ grep x < out
+
+---
+## Analyze UNIX/Linux applications
+
+However, supporting time-sharing and multi-tasking execution through the shell is the focus of UNIX design at the beginning.
+Many system calls can be made through the shell.
+
+The shell creates a new process for each command you type, for example, for
+
+     $ echo hello
 
 
-## 分析UNIX/Linux类应用
-fork()系统调用创建一个新的进程
-
-    $ fork
-
-内核创建一个调用进程的副本
-- 指令、数据、寄存器、文件描述符、当前目录
-- "父 "和 "子 "进程
 
 ---
 
 
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
+The fork() system call creates a new process
 
-唯一的区别：fork()在父进程中返回一个pid，在子进程中返回0。
-pid（进程ID）是一个整数，内核给每个进程一个不同的pid
+     $ fork
 
-因此，[fork.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/fork.c)的 "fork()返回 "在**两个**进程中都会执行
-"if(pid == 0) "实现对父子进程的区分
-
----
-## 分析UNIX/Linux类应用
-
-我们怎样才能在这个进程中运行一个新程序呢？  
-
-例如：[exec.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/exec.c)，用一个可执行文件代替调用进程。
-shell是如何运行一个程序的，例如
-
-    $ echo a b c
-
-一个程序被储存在一个文件中：指令和初始内存，由编译器和链接器创建
-所以有一个叫echo的文件，包含对 `exec` 系统调用的操作命令
+The kernel creates a copy of the calling process
+- Instructions, data, registers, file descriptors, current directory
+- "parent" and "child" processes
 
 ---
-## 分析UNIX/Linux类应用
 
-exec()用一个可执行文件取代当前进程
-- 丢弃指令和数据存储器
-- 从文件中加载指令和内存
-- 保留了文件描述符
+
+## Analyze UNIX/Linux applications
+
+The only difference: fork() returns a pid in the parent process and 0 in the child process.
+pid (process ID) is an integer, the kernel gives each process a different pid
+
+Therefore, the "fork() returns" of [fork.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/fork.c) in **two** processes will execute
+"if(pid == 0) " realizes the distinction between parent and child processes
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
+
+How can we run a new program in this process?
+
+For example: [exec.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/exec.c), replace the calling process with an executable file.
+How the shell runs a program such as
+
+     $ echo a b c
+
+A program is stored in a file: instructions and initial memory, created by the compiler and linker
+So there is a file called echo, which contains the operation commands for the `exec` system call
+
+---
+## Analyze UNIX/Linux applications
+
+exec() replaces the current process with an executable file
+- Discard instruction and data memory
+- load instructions and memory from file
+- File descriptors are preserved
+
+---
+## Analyze UNIX/Linux applications
 
 exec(filename, argument-array)
-argument-array保存命令行参数；exec传递给main()
+argument-array holds command line arguments; exec passed to main()
 
-    cat user/echo.c
+     cat user/echo.c
 
-echo.c显示了一个程序如何看待它的命令行参数
-
----
-## 分析UNIX/Linux类应用
-
-例如：[forkexec.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/forkexec.c)，fork()一个新进程，exec()一个程序。
-
-      $ forkexec
-
-forkexec.c包含了一个常见的UNIX习惯用语。
-- fork() 一个子进程
-- exec() 子进程中的一条命令
-- 父进程等待子进程完成
-
+echo.c shows how a program sees its command line arguments
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
-shell对你输入的每个命令都进行fork/exec/wait操作。
-在wait()之后，shell会打印出下一个提示信息
-在后台运行 -- `&` -- , shell会跳过wait()
+For example: [forkexec.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/forkexec.c), fork() a new process, exec() a program.
+
+       $ forkexec
+
+forkexec.c contains a common UNIX idiom.
+- fork() a child process
+- exec() a command in a child process
+- The parent process waits for the child process to complete
 
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
+
+The shell forks/execs/waits every command you enter.
+After wait(), the shell will print out the next prompt
+Run in the background -- `&` -- , the shell will skip wait()
+
+
+---
+## Analyze UNIX/Linux applications
 
 exit(status) --> wait(&status)
 
-status约定：0 = 成功，1 = 命令遇到了一个错误
-注意：fork()会复制，但exec()会丢弃复制的内存。
-这可能看起来很浪费
-你可以通过 "写时复制 "技术透明地消除复制
+status convention: 0 = success, 1 = command encountered an error
+Note: fork() makes a copy, but exec() discards the copied memory.
+This may seem wasteful.
+You can transparently eliminate copying with "copy-on-write" techniques.
 
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
-例子：[redirect.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/redirect.c)，重定向一个命令的输出
-shell对此做了什么？
+Example: [redirect.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/redirect.c), redirects the output of a command
+What does the shell do about this?
 
-    $ echo hello > out
+     $ echo hello > out
  
-答案：fork，改变子进程的FD1，执行echo
+Answer: fork, change the FD1 of the child process, execute echo
 
-    $ redirect
-    $ cat output.txt
-
----
-## 分析UNIX/Linux类应用
-
-注意：open()总是选择最低的未使用的FD；选择1是由于close(1)。
-fork、FD和exec很好地互动，以实现I/O重定向
-独立的fork-then-exec给子进程一个机会在exec之前改变FD。
-FDs提供了指示作用
-命令只需使用FDs 0和1，不需要知道它们的位置
-exec保留了sh设置的FDs
-因此：只有sh需要知道I/O重定向，而不是每个程序
-
-
+     $ redirect
+     $ cat output.txt
 
 ---
-## 分析UNIX/Linux类应用
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
 
-一些值得思考的问题：
-- 为什么是这些I/O和进程的抽象？为什么不是其他的东西？
-- 为什么要提供一个文件系统？为什么不让程序以他们自己的方式使用磁盘？
-- 为什么是FDs？为什么不向write()传递一个文件名？
-- 为什么文件是字节流，而不是磁盘块或格式化记录？
-- 为什么不把fork()和exec()结合起来？
+## Analyze UNIX/Linux applications
 
-UNIX的设计很好用，但我们会看到其他的设计
+Note: open() always chooses the lowest unused FD; the choice of 1 is due to close(1).
+fork, FD and exec interact nicely for I/O redirection
+Independent fork-then-exec gives the child process a chance to change the FD before exec.
+FDs provide indication
+Commands only need to use FDs 0 and 1, no need to know their positions
+exec preserves the FDs set by sh
+Therefore: only sh needs to know about I/O redirection, not every program
+
+
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
-例子：[pipe1.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/pipe1.c)，通过一个管道进行通信
-shell是如何实现的
+Some questions to ponder:
+- Why these I/O and process abstractions? Why not something else?
+- Why provide a filesystem? Why not let programs use the disk in their own way?
+-Why FDs? Why not pass a filename to write()?
+- Why are files streams of bytes, not disk blocks or formatted records?
+- Why not combine fork() and exec()?
 
-    $ ls | grep x
-    $ pipe1
+The UNIX design works well, but we'll see other designs
 
-一个FD可以指一个 "管道"，也可以指一个文件。
-pipe()系统调用创建了两个FD
-- 从第一个FD中读取
-- 写入第二个FD
+---
+## Analyze UNIX/Linux applications
+
+Example: [pipe1.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/pipe1.c), communicate through a pipe
+How the shell is implemented
+
+     $ ls | grep x
+     $pipe1
+
+An FD can refer to either a "pipe" or a file.
+The pipe() system call creates two FDs
+- read from the first FD
+- write to the second FD
   
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
-内核为每个管道维护一个缓冲区
-- write()添加到缓冲区中
-- read()等待，直到有数据出现
-
----
-## 分析UNIX/Linux类应用
-
-例子：[pipe2.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/pipe2.c)，在进程间通信。
-管道与fork()结合得很好，可以实现ls | grep x。
-shell创建一个管道。
-然后分叉（两次）。
-然后将ls的FD1连接到管道的写FD。
-和grep的FD 0连接到管道上。
-
-   $ pipe2 -- 一个简化版本
-
-管道是一个独立的抽象概念，但与 fork() 结合得很好
-
+The kernel maintains a buffer for each pipe
+- write() adds to the buffer
+- read() waits until data appears
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
+Example: [pipe2.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/pipe2.c), communicates between processes.
+Pipes combine nicely with fork() to do ls|grep x.
+The shell creates a pipe.
+Then fork (twice).
+Then connect the FD1 of ls to the write FD of the pipe.
+and grep's FD 0 connected to the pipe.
 
-* 例子：[list.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/list.c)，列出一个目录中的文件
-ls是如何获得一个目录中的文件列表的？
-你可以打开一个目录并读取它 -> 文件名
-"... "是一个进程的当前目录的假名
-更多细节见ls.c
+    $ pipe2 -- a simplified version
+
+Pipes are a separate abstraction, but combine nicely with fork()
+
 
 ---
-## 分析UNIX/Linux类应用
+## Analyze UNIX/Linux applications
 
-小结
 
-  * 我们已经研究了UNIX的I/O、文件系统和进程的抽象
-  * 这些接口很简单，只有整数和I/O缓冲区
-  * 这些抽象结合得很好，例如，I/O重定向
+* Example: [list.c](https://pdos.csail.mit.edu/6.828/2021/lec/l-overview/list.c), list files in a directory
+How does ls get a list of files in a directory?
+You can open a directory and read it -> filename
+"... " is a pseudonym for the current directory of a process
+See ls.c for more details
+
+---
+## Analyze UNIX/Linux applications
+
+summary
+
+   * We have studied UNIX's I/O, file system and process abstractions
+   * These interfaces are very simple, only integers and I/O buffers
+   * These abstractions combine well, for example, I/O redirection

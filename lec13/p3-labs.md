@@ -11,202 +11,229 @@ backgroundColor: white
 <!-- theme: gaia -->
 <!-- _class: lead -->
 
-# 第十三讲 设备管理
-## 第三节 支持device的OS（DOS）
+# Lecture 13 Device Management
+## The third section supports device OS (DOS)
 ---
-### 实践：DOS
-- **进化目标**
-- 历史背景
-- 相关硬件
-- 总体思路
-- 实践步骤
-- 软件架构
-- 程序设计
+### Practice: DOS
+- **Evolution Goal**
+- History background
+- Related hardware
+- General idea
+- Practical steps
+- Software Architecture
+- Programming
 
-![bg right:65% 100%](figs/device-os-detail.png)
-
-
----
-### 实践：DOS -- 以往目标
-- SMOS：在多线程中支持对共享资源的同步互斥访
-- TCOS：支持线程和协程 
-- IPC OS：进程间交互
-- Filesystem OS：支持数据持久保存
-- Process OS: 增强进程管理和资源管理
-- Address Space OS: 隔离APP访问的内存地址空间
-- multiprog & time-sharing OS: 让APP共享CPU资源
-- BatchOS： 让APP与OS隔离，加强系统安全，提高执行效率
-- LibOS: 让APP与HW隔离，简化应用访问硬件的难度和复杂性
-
----
-### 实践：DOS -- 进化目标
-支持对多种外设的高效访问
-- 支持在内核中响应外设中断
-- 支持在内核中保证对全局变量的互斥访问
-- 基于中断机制的串口设备驱动
-- 基于中断机制的Virtio-Block设备驱动
-
----
-### 实践：DOS 
-### 同学的进化目标
-- 理解如何在内核中响应中断
-- 理解外设驱动的基本管理过程
-- 会写支持多种外设的OS
-![bg right 80%](figs/juravenator.png)
-<!-- 侏罗猎龙的属名（Juravenator）来自拉丁语中的“Jura”（意为“侏罗纪”）及“Venator”（意为“猎人”），意思是“侏罗纪的猎人”。 -->
+![bg right:50% 100%](figs/device-os-detail.png)
 
 
 ---
-### 实践：DOS
-- 进化目标
-- 历史背景
-- **相关硬件**
-- 总体思路
-- 实践步骤
-- 软件架构
-- 程序设计
+<style scoped>
+{
+  font-size: 28px
+}
+</style>
 
-![bg right:65% 100%](figs/plic-clint-riscv.png)
-
----
-### 实践：DOS
-<!-- https://blog.csdn.net/weixin_40604731/article/details/109279426 2020.10.25 RISC-V --PLIC平台级中断控制器 -->
-**PLIC中断源**
-PLIC支持多个中断源，每个中断源可以是不同触发类型，电平触发或者边沿触发、PLIC为每个中断源分配
-- 闸口（Gateway）和IP
-- 编号（ID）
-- 优先级（priority）
-- 使能（Enable）
-
+### Practice: DOS -- past goals
+- SMOS: Supports synchronized mutex access to shared resources in multithreading
+- TCOS: support threads and coroutines
+- IPC OS: interprocess interaction
+- Filesystem OS: support for persistent data storage
+- Process OS: Enhanced process management and resource management
+- Address Space OS: Isolate the memory address space accessed by APP
+- Multiprog & time-sharing OS: Let APP share CPU resources
+- BatchOS: isolate APP from OS, strengthen system security, and improve execution efficiency
+- LibOS: Isolate APP from HW, simplifying the difficulty and complexity of applications accessing hardware
 
 ---
-### 实践：DOS
-<!-- https://blog.csdn.net/weixin_40604731/article/details/109279426 2020.10.25 RISC-V --PLIC平台级中断控制器 -->
-**PLIC中断源**
-- 闸口（Gateway）将不同类型的外部中断传换成统一的内部中断请求
-- 闸口保证只发送一个中断请求，中断请求经过闸口发送后，硬件自动将对应的IP寄存器置高
-- 闸口发送一个中断请求后则启动屏蔽，如果此中断没有被处理完成，则后续的中断将会被闸口屏蔽
+### Practice: DOS -- Evolution goals
+Supports efficient access to a wide variety of peripherals
+- Support for responding to peripheral interrupts in the kernel
+- Support for guaranteed exclusive access to global variables in the kernel
+- Serial device driver based on interrupt mechanism
+- Virtio-Block device driver based on interrupt mechanism
 
 ---
-### 实践：DOS
-<!-- https://blog.csdn.net/weixin_40604731/article/details/109279426 2020.10.25 RISC-V --PLIC平台级中断控制器 -->
-**PLIC中断源**
-- PLIC为每个中断源分配编号（ID）。ID编号0被预留，作为表示“不存在的中断”，因此有效的中断ID从1开始
-- 每个中断源的优先级寄存器应该是存储器地址映射的可读可写寄存器，从而使得软件可以对其编程配置不同的优先级
-- PLIC支持多个优先级，优先级的数字越大，表示优先级越高
-- 优先级0意味着“不可能中断”，相当于中断源屏蔽
+### Practice: DOS
+### Classmate's evolutionary goal
+- Understand how to respond to interrupts in the kernel
+- Understand the basic management process of peripheral drivers
+- Can write an OS that supports a variety of peripherals
+![bg right:40% 100%](figs/juravenator.png)
+<!-- The genus name of Juravenator (Juravenator) comes from "Jura" (meaning "Jurassic") and "Venator" (meaning "hunter") in Latin, meaning "Jurassic" hunter". -->
+
 
 ---
-### 实践：DOS
-<!-- https://blog.csdn.net/weixin_40604731/article/details/109279426 2020.10.25 RISC-V --PLIC平台级中断控制器 -->
-**PLIC中断源**
-每个中断目标的中断源均分配了一个中断使能（IE）寄存器，IE寄存器是可读写寄存器，从而使得软件对其编程
-- 如果IE寄存器被配置为0，则意味着此中断源对应中断目标被屏蔽
-- 如果IE寄存器被配置为1，则意味着此中断源对应中断目标被打开
+### Practice: DOS
+- Evolution goals
+- History background
+- **Related hardware**
+- General idea
+- Practical steps
+- Software Architecture
+- Programming
+
+![bg right:55% 100%](figs/plic-clint-riscv.png)
+
 ---
-### 实践：DOS
-- 进化目标
-- 历史背景
-- 相关硬件
-- **总体思路**
-    - **外设中断**
-- 实践步骤
-- 软件架构
-- 程序设计
-![bg right:65% 100%](figs/device-os-detail.png)
+### Practice: DOS
+<!-- https://blog.csdn.net/weixin_40604731/article/details/109279426 2020.10.25 RISC-V --PLIC platform-level interrupt controller -->
+**PLIC interrupt source**
+PLIC supports multiple interrupt sources, each interrupt source can be a different trigger type, level trigger or edge trigger, PLIC assigns each interrupt source
+- Gateway and IP
+- Number (ID)
+- Priority
+- Enable
+
+
 ---
-### 实践：DOS  -- **总体思路**
+### Practice: DOS
+<!-- https://blog.csdn.net/weixin_40604731/article/details/109279426 2020.10.25 RISC-V --PLIC platform-level interrupt controller -->
+**PLIC interrupt source**
+- Gate (Gateway) converts different types of external interrupts into unified internal interrupt requests
+- The gate guarantees that only one interrupt request is sent. After the interrupt request is sent through the gate, the hardware automatically sets the corresponding IP register to high
+- After the gate sends an interrupt request, it starts masking. If the interrupt is not processed, subsequent interrupts will be masked by the gate
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+### Practice: DOS
+<!-- https://blog.csdn.net/weixin_40604731/article/details/109279426 2020.10.25 RISC-V --PLIC platform-level interrupt controller -->
+**PLIC interrupt source**
+- The PLIC assigns a number (ID) to each interrupt source. ID number 0 is reserved as a "non-existent interrupt", so valid interrupt IDs start from 1
+- The priority register of each interrupt source should be a readable and writable register of memory address mapping, so that software can program and configure different priorities
+- PLIC supports multiple priorities, the larger the priority number, the higher the priority
+- Priority 0 means "interrupt impossible", which is equivalent to interrupt source masking
+
+---
+
+### Practice: DOS
+<!-- https://blog.csdn.net/weixin_40604731/article/details/109279426 2020.10.25 RISC-V --PLIC platform-level interrupt controller -->
+**PLIC interrupt source**
+The interrupt source of each interrupt target is assigned an interrupt enable (IE) register, and the IE register is a readable and writable register, allowing software to program it
+- If the IE register is configured as 0, it means that the corresponding interrupt target of this interrupt source is masked
+- If the IE register is configured as 1, it means that the corresponding interrupt target of this interrupt source is enabled
+---
+### Practice: DOS
+- Evolution goals
+- History background
+- Related hardware
+- **General idea**
+     - **Peripheral Interrupt**
+- Practical steps
+- Software Architecture
+- Programming
+![bg right:55% 100%](figs/device-os-detail.png)
+
+---
+<style scoped>
+{
+  font-size: 28px
+}
+</style>
+
+### Practice: DOS -- **General idea**
   
-- 为何支持外设中断
-   -  提高系统的整体执行效率
-- 为何在内核态响应外设中断
-   - 提高OS对外设IO请求的响应速度 
-- 潜在的问题
-  - 内核态能响应中断后，不能保证对全局变量的互斥访问
-  - 原因：中断会打断当前执行，并切换到另一控制流访问全局变量
-- 解决方案
-  - 在访问全局变量起始前屏蔽中断，结束后使能中断 
+- Why support peripheral interrupt
+    - Improve the overall execution efficiency of the system
+- Why respond to peripheral interrupts in kernel mode
+    - Improve OS response speed to peripheral IO requests
+- Potential problems
+   - After the kernel mode can respond to interrupts, mutual exclusive access to global variables cannot be guaranteed
+   - Reason: interrupt will interrupt the current execution and switch to another control flow to access global variables
+- Solution
+   - Mask interrupts before the access to global variables starts, and enable interrupts after the end
 
 ---
-### 实践：DOS
-- 进化目标
-- 历史背景
-- 相关硬件
-- **实践步骤**
-- 软件架构
-- 程序设计
-![bg right:65% 100%](figs/device-os-detail.png)
+### Practice: DOS
+- Evolution goals
+- History background
+- Related hardware
+- **Practical Steps**
+- Software Architecture
+- Programming
+![bg right:55% 100%](figs/device-os-detail.png)
 
 ---
-### 实践：DOS  -- **实践步骤**
+### Practice: DOS -- **Practice Steps**
 ```
 git clone https://github.com/rcore-os/rCore-Tutorial-v3.git
 cd rCore-Tutorial-v3
 git checkout ch9
 ```
-应用程序没有改变，但在串口输入输出、块设备读写的IO操作上是基于中断方式实现的。
+The application program has not changed, but the IO operations of serial port input and output, block device read and write are implemented based on interrupt mode.
 
 ---
-### 实践：DOS
-- 进化目标
-- 历史背景
-- 相关硬件
-- 实践步骤
-- **软件架构**
-- 程序设计
-![bg right:65% 100%](figs/device-os-detail.png)
+### Practice: DOS
+- Evolution goals
+- History background
+- Related hardware
+- Practical steps
+- **Software Architecture**
+- Programming
+![bg right:55% 100%](figs/device-os-detail.png)
+
 ---
-### 实践：DOS  -- **软件架构**
-内核的主要修改
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+### Practice: DOS -- **Software Architecture**
+Major changes to the kernel
 ```
 os/src/
 ├── boards
-│   └── qemu.rs  // UART、VIRTIO、PLIC的MMIO地址
-├── console.rs  //基于UART的STDIO
+│ └── qemu.rs // MMIO address of UART, VIRTIO, PLIC
+├── console.rs //UART-based STDIO
 ├── drivers
-│   ├── block
-│   │   └── virtio_blk.rs //基于中断/DMA方式的VIRTIO-BLK驱动
-│   ├── chardev
-│   │   └── ns16550a.rs //基于中断方式的串口驱动
-│   └── plic.rs //PLIC驱动
-├── main.rs  //外设中断相关初始化
+│ ├── block
+│ │ └── virtio_blk.rs //VIRTIO-BLK driver based on interrupt/DMA
+│ ├── chardev
+│ │ └── ns16550a.rs //Interrupt-based serial driver
+│ └── plic.rs //PLIC driver
+├── main.rs //Peripheral interrupt related initialization
 └── trap
-    ├── mod.rs //支持处理外设中断
-    └── trap.S //支持内核态响应外设中断
+     ├── mod.rs //Support processing peripheral interrupts
+     └── trap.S //Support kernel state response to peripheral interrupt
 ```
 
 ---
-### 实践：DOS
-- 进化目标
-- 历史背景
-- 相关硬件
-- 实践步骤
-- 软件架构
-- **程序设计**
-![bg right:65% 100%](figs/device-os-detail.png)
+### Practice: DOS
+- Evolution goals
+- History background
+- Related hardware
+- Practical steps
+- Software Architecture
+- **Programming**
+![bg right:55% 100%](figs/device-os-detail.png)
 
 ---
-###  程序设计
+###  Programming
 
-1. 外设初始化
-2. 外设中断处理
-3. 外设I/O读写操作
-
-
----
-###  程序设计
-- 外设初始化
-   - PLIC初始化
-   - 串口设备初始化
-   - virtio-blk设备初始化 
+1. Peripheral initialization
+2. Peripheral interrupt processing
+3. Peripheral I/O read and write operations
 
 
 ---
-###  程序设计
--  外设中断处理
+###  Programming
+- Peripheral initialization
+    - PLIC initialization
+    - Serial device initialization
+    - virtio-blk device initialization
+
 
 ---
-###  程序设计
--  外设I/O读写操作
-   - 串口设备读写
-   - virtio-blk设备读写  
+###  Programming
+- Peripheral interrupt handling
+
+---
+###  Programming
+- Peripheral I/O read and write operations
+    - Serial device read and write
+    - virtio-blk device read and write

@@ -11,46 +11,46 @@ backgroundColor: white
 <!-- theme: gaia -->
 <!-- _class: lead -->
 
-# 第九讲 文件系统
+# Lecture 9 File System
 
-## 第二节 文件系统的设计与实现
+## Section 2 Design and Implementation of File System
 
 
 <br>
 <br>
 
-向勇 陈渝 李国良 
+Xiang Yong Chen Yu Li Guoliang
 
-2022年秋季
+Fall 2022
 
 ---
 
-**提纲**
+**Outline**
 
-### 1. 概述
-2. 文件系统的基本数据结构
-3. 文件缓存
-4. 文件分配
-5. 文件访问过程示例
+### 1 Overview
+2. The basic data structure of the file system
+3. File caching
+4. File distribution
+5. Example of file access process
 
---- 
-#### 文件系统在内核中的位置
+---
+#### The location of the file system in the kernel
 ![w:850](figs/ucorearch.png)
 
 ---
 
-#### 文件系统的分层结构
+#### Hierarchical structure of the file system
 
 ![w:950](figs/fsarch.png)
 
 ---
-#### 文件系统在计算机系统中的分层结构
+#### The hierarchical structure of the file system in the computer system
 
 ![w:700](figs/fsarchdetail.png)
 
 ---
 
-#### 文件系统的用户视图与内核视图
+#### User view and kernel view of the file system
 
 ![w:450](figs/fslayer.png)
 
@@ -58,54 +58,58 @@ backgroundColor: white
 
 
 ---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Virtual file system
 
-#### 虚拟文件系统
+(Virtual File System, VFS)
 
-（Virtual File System，VFS）
-
-- 定义了一组所有文件系统都支持的数据结构和标准接口。
-- 磁盘的文件系统：直接把数据存储在磁盘中，比如 Ext 2/3/4、XFS。
-- 内存的文件系统：内存辅助数据结构 - 例如目录项。
+- Defines a set of data structures and standard interfaces supported by all file systems.
+- Disk file system: directly store data in the disk, such as Ext 2/3/4, XFS.
+- In-memory filesystems: in-memory auxiliary data structures - such as directory entries.
 ![bg right 50% 80%](figs/fsarchi.png)
 
 
---- 
-#### 虚拟文件系统的功能
-- 目的：对所有不同文件系统的抽象
-- 功能
-  - 提供相同的文件和文件系统接口
-  - 管理所有文件和文件系统关联的数据结构
-  - 高效查询例程, 遍历文件系统
-  - 与特定文件系统模块的交互
+---
+#### Virtual file system function
+- Purpose: Abstraction of all the different filesystems
+- Features
+   - Provides the same file and filesystem interface
+   - Manages all file and file system associated data structures
+   - Efficient query routines, traversing the file system
+   - Interaction with specific filesystem modules
 
 
---- 
-#### 虚拟文件系统统一不同文件系统的访问接口
-![w:750](figs/vfs-app.png)
+---
+#### The virtual file system unifies the access interfaces of different file systems
+![w:700](figs/vfs-app.png)
 
 
---- 
+---
 
-**提纲**
+**Outline**
 
-1. 概述
-### 2. 文件系统的基本数据结构
-3. 文件缓存
-4. 文件分配
-5. 文件访问过程示例
+1 Overview
+### 2. The basic data structure of the file system
+3. File caching
+4. File distribution
+5. Example of file access process
 
---- 
+---
 
-#### 文件系统的存储视图
-- 文件卷控制块 (`superblock`)
-- 文件控制块( `inode`/`vnode`)
-- 目录项 (`dir_entry`)
-- 数据块（`data block`）
-![bg right:51% 100%](figs/fsdisk.png)
+#### Storage view of the file system
+- File volume control block (`superblock`)
+- File control blocks ( `inode`/`vnode`)
+- directory entry (`dir_entry`)
+- Data block (`data block`)
+![bg right:45% 100%](figs/fsdisk.png)
 
---- 
+---
 
-#### 文件系统的组织视图
+#### Organizational view of the file system
 
 ![bg 90%](figs/fsorg.png)
 ![bg 90%](figs/fsall.png)
@@ -113,335 +117,379 @@ backgroundColor: white
 
 ---
 
-#### 文件系统基本数据结构 
+#### The basic data structure of the file system
 ![w:700](figs/fsoverall.png)
 
 
---- 
-#### 文件卷控制块 (`superblock`)
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Volume control block (`superblock`)
 
-每个文件系统一个文件卷控制块
-- 文件系统详细信息
-- 块大小、空余块数量等
-- block 与inode 的总量，未使用与已使用的数量
-- filesystem的挂载时间、最近一次写入时间、最近一次检验磁盘(fsck) 时间
-![bg right:49% 100%](figs/efs-superblock.png)
+One file volume control block per file system
+- File system details
+- Block size, number of free blocks, etc.
+- Total number of blocks and inodes, unused and used
+- Filesystem mount time, last write time, last check disk (fsck) time
+![bg right:45% 100%](figs/efs-superblock.png)
 
 
---- 
-#### 文件控制块inode
-每个文件有一个文件控制块inode (`inode`/`vnode`)
-  - 大小、数据块位置（指向一个或多个datablock）
-  - 访问模式(read/write/excute)
-  - 拥有者与群组(owner/group)
-  - 时间信息：建立或状态改变的时间、最近读取时间/修改的时间
-  - **文件名在目录的datablock中**
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### File control block inode
+Each file has a file control block inode (`inode`/`vnode`)
+   - Size, data block location (pointing to one or more datablocks)
+   - Access mode (read/write/excute)
+   - Owner and group (owner/group)
+   - Time information: time of establishment or state change, last read time/modified time
+   - **Filename is in the datablock of the directory**
 <!--![bg right 10% 50%](figs/efs-inode.png)-->
 
 ![bg right:46% 90%](figs/efs-inode.png)
 
 
 
---- 
-#### bitmap块
-bitmap块( `bitmap inode/dnode`) 
-- inode使用或者未使用标志位
-- dnode使用或者未使用标志位
+---
+#### Bitmap block
+Bitmap block ( `bitmap inode/dnode`)
+- Inode used or unused flag
+- Dnode use or not use flag
 
---- 
-#### 数据块dnode( `data node`)
-- 目录和文件的数据块
-    - 放置目录和文件内容
-    - 格式化时确定data block的固定大小
-    - 每个block都有编号，以方便inode记录
-    - inode一般为128B
-    - data block一般为4KB
+---
+#### Data block dnode( `data node`)
+- Data blocks for directories and files
+     - Put directory and file content
+     - Determine the fixed size of the data block when formatting
+     - Each block has a number to facilitate inode records
+     - Inode is generally 128B
+     - The data block is generally 4KB
 
---- 
-#### 目录的数据块
+---
+#### Data blocks for directories
 ![w:850](figs/fsdir.png)
 
 
 
---- 
-#### 目录项 (`dir_entry`)
-- 目录项一般会在内存中缓存
-  - 每个目录项一个(目录和文件)
-  - 将目录项数据结构及树型布局编码成树型数据结构
-  - 指向文件控制块、父目录、子目录等
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Directory Entry (`dir_entry`)
+- Directory entries are generally cached in memory
+   - one per directory entry (directory and file)
+   - Encode directory entry data structure and tree layout into a tree data structure
+   - points to file control blocks, parent directories, subdirectories, etc.
 ![bg right 100%](figs/efs-direntry.png)
 
 ![bg right 100%](figs/fslayout.png)
 
---- 
+---
 
-**提纲**
+**Outline**
 
-1. 概述
-2. 文件系统的基本数据结构
-### 3. 文件缓存
-4. 文件分配
-5. 文件访问过程示例
+1 Overview
+2. The basic data structure of the file system
+### 3. File cache
+4. File distribution
+5. Example of file access process
 
---- 
+---
 
-#### 多种磁盘缓存位置
+#### Various disk cache locations
 ![w:1200](figs/diskcache.png)
 
 ---
-#### 数据块缓存
-- 数据块**按需读入**内存
-  - 提供read()操作
-  - 预读: 预先读取后面的数据块
-- 数据块使用后被**缓存**
-  - 假设数据将会再次用到
-  - 写操作可能被缓存和延迟写入
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Data block cache
+- Data blocks **on-demand read** into memory
+   - Provide read() operation
+   - Read ahead: read the following data blocks in advance
+- Data blocks are **cached** after use
+   - Assuming the data will be used again
+   - Write operations may be cached and delayed
  
- 页缓存: 统一缓存数据块和内存页
+  Page cache: Unified cache of data blocks and memory pages
 
 ![bg right:45% 90%](figs/datacache.png)
 
---- 
-#### 虚拟页式存储 -- 页缓存
+---
+#### Virtual page storage -- page cache
 
-在虚拟地址空间中虚拟页面可映射到本地外存文件中
+In the virtual address space, virtual pages can be mapped to local external memory files
   
 ![w:700](figs/pagecache.png)
 
 <!--
---- 
-#### 文件系统的设计与实现 -- 缓存
-虚拟页式存储 -- 页缓存
-- 在虚拟地址空间中虚拟页面可映射到本地外存文件中
-- 文件数据块的页缓存
-  - 在虚拟内存中文件数据块被映射成页
-  - 文件的读/写操作被转换成对内存的访问
-  - 可能导致缺页和/或设置为脏页
-  - 问题: 页置换算法需要协调虚拟存储和页缓存间的页面数
+---
+#### Design and implementation of the file system -- cache
+Virtual page storage -- page cache
+- Virtual pages in the virtual address space can be mapped to local external memory files
+- Page cache for file data blocks
+   - File data blocks are mapped into pages in virtual memory
+   - File read/write operations are converted to memory accesses
+   - May result in page faults and/or dirty pages
+   - Problem: The page replacement algorithm needs to coordinate the number of pages between the virtual storage and the page cache
 -->
 
 
---- 
-#### 虚拟页式存储 -- 页缓存
+---
+#### Virtual page storage -- page cache
 
-在虚拟地址空间中虚拟页面可映射到本地外存文件中
-- 文件数据块的页缓存
-  - 在虚拟内存中文件数据块被映射成页
-  - 文件的读/写操作被转换成对内存的访问
-  - 可能导致缺页和/或设置为脏页
-- 问题: 页置换算法需要协调虚拟存储和页缓存间的页面数
-
-
---- 
-#### 文件描述符
-- 每个被打开的文件都有一个文件描述符
-- 作为index，指向对应文件状态信息
-
-![w:750](figs/fd-openfiletable.png)
+In the virtual address space, virtual pages can be mapped to local external memory files
+- Page cache for file data blocks
+   - File data blocks are mapped into pages in virtual memory
+   - File read/write operations are converted to memory accesses
+   - May result in page faults and/or dirty pages
+- Problem: The page replacement algorithm needs to coordinate the number of pages between the virtual storage and the page cache
 
 
-
---- 
-#### 打开文件表
-- 每个进程一个进程打开文件表
-- 一个系统打开文件表
+---
+#### File descriptor
+- Each opened file has a file descriptor
+- As an index, it points to the corresponding file status information
 
 ![w:750](figs/fd-openfiletable.png)
 
 
---- 
-#### 文件锁
-一些文件系统提供文件锁，用于协调多进程的文件访问
-- 强制 – 根据锁保持情况和访问需求确定是否拒绝访问
-- 劝告 – 进程可以查找锁的状态来决定怎么做
+
+---
+#### Open file table
+- One process open file table per process
+- A system open file table
+
+![w:750](figs/fd-openfiletable.png)
 
 
---- 
-
-**提纲**
-
-1. 概述
-2. 文件系统的基本数据结构
-3. 文件缓存
-### 4. 文件分配
-5. 文件访问过程示例
-
---- 
-
-#### 文件大小
-- 大多数文件都很小
-  - 需要支持小文件
-  - 数据块空间不能太大
-- 一些文件非常大
-  - 能支持大文件
-  - 可高效读写
-![bg right:55% 90%](figs/fd-openfiletable.png)
+---
+#### File Lock
+Some file systems provide file locks for coordinating file access by multiple processes
+- Mandatory – Deny access based on lock hold and access requirements
+- Advisory - Processes can look up the state of the lock to decide what to do
 
 
---- 
-#### 文件分配
+---
 
-分配文件数据块
-- 分配方式
-   - 连续分配
-   - 链式分配
-   - 索引分配
-- 评价指标
-  - 存储效率：外部碎片等
-  - 读写性能：访问速度
+**Outline**
 
-![bg right:54% 90%](figs/fd-openfiletable.png)
+1 Overview
+2. The basic data structure of the file system
+3. File caching
+### 4. File allocation
+5. Example of file access process
 
---- 
-#### 连续分配
-文件头指定起始块和长度
+---
+
+#### File size
+- Most files are small
+   - need to support small files
+   - The data block space cannot be too large
+- Some files are very large
+   - Can support large files
+   - Efficient reading and writing
+![bg right:50% 90%](figs/fd-openfiletable.png)
+
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### File Allocation
+
+Allocate file data blocks
+- Allocation
+    - continuous allocation
+    - chain allocation
+    - index assignment
+- Evaluation indicators
+   - Storage efficiency: external fragmentation, etc.
+   - Read and write performance: access speed
+
+![bg right:50% 90%](figs/fd-openfiletable.png)
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Continuous Allocation
+The file header specifies the starting block and length
 
 ![w:900](figs/continuealloc.png)
 
-- 分配策略: 最先匹配, 最佳匹配, ...
-- 优点: 
-  - 高效的顺序和随机读访问
-- 缺点
-  - 频繁分配会带来碎片；增加文件内容开销大
+- Assignment strategy: first match, best match, ...
+- advantage: 
+   - Efficient sequential and random read access
+- Shortcoming
+   - Frequent allocation will bring fragmentation; adding file content is expensive
 
 
 
---- 
-#### 链式分配
-数据块以链表方式存储
+---
+#### Chain allocation
+Data blocks are stored in a linked list
 
 ![w:800](figs/linkalloc.png)
 
-- 优点: 创建、增大、缩小很容易；几乎没有碎片
-- 缺点：
-   - 随机访问效率低；可靠性差；
-   - 破坏一个链，后面的数据块就丢了
+- Pros: easy to create, grow, shrink; almost no fragmentation
+- Shortcoming:
+    - Low random access efficiency; poor reliability;
+    - Breaking a chain, the following data blocks are lost
 
 
---- 
-#### 链式分配
+---
+#### Chain allocation
 
-  - 显式连接
-  - 隐式连接
+   - Explicit link
+   - Implicit connection
 ![bg right:35% 80%](figs/fs-explicit.png)
 
 ![bg right:70% 100%](figs/fs-implicit.png)
 
 
---- 
-#### 索引分配
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Index Assignment
 
-- 文件头包含了索引数据块指针
-- 索引数据块中的索引是文件数据块的指针
+- The file header contains the index data block pointer
+- The index in the index data block is a pointer to the file data block
 ![w:800](figs/indexalloc.png)
-- 优点
-  - 创建、增大、缩小很容易；几乎没有碎片；支持直接访问
-- 缺点
-  - 当文件很小时，存储索引的开销相对大
+- Advantage
+   - Easy to create, grow, shrink; almost no fragmentation; supports direct access
+- Shortcoming
+   - When the file is small, the overhead of storing the index is relatively large
 
-如何处理大文件?
+How to handle large files?
 
 
---- 
-#### 索引分配
+---
+#### Index Assignment
 
-- 链式索引块 (IB+IB+…)
+- Chained index blocks (IB+IB+…)
 ![w:800](figs/linkindex.png)
-- 多级索引块(IB*IB *…)
+- Multi-level index blocks (IB*IB *…)
 ![w:800](figs/multiindex.png)
 
 
---- 
-#### 索引分配
+---
+#### Index Assignment
 
 ![w:1000](figs/fsindex.png)
 
 
---- 
-#### 多级索引分配
+---
+#### Multi-level index allocation
 
 ![w:800](figs/ufsinode.png)
 
---- 
-#### 多级索引分配
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Multi-level index allocation
 
-- 文件头包含13个指针
-  - 10 个指针指向数据块
-  - 第11个指针指向索引块
-  - 第12个指针指向二级索引块
-  - 第13个指针指向三级索引块
+- The file header contains 13 pointers
+   - 10 pointers to data blocks
+   - The 11th pointer points to the index block
+   - The 12th pointer points to the secondary index block
+   - The 13th pointer points to the third-level index block
 
-大文件在访问数据块时需要大量查询
+Large files require a lot of queries when accessing data blocks
 
 
 ![bg right:43% 100%](figs/ufsinode.png)
 
 
---- 
-#### 文件分配方式比较
+---
+#### Comparison of file allocation methods
 ![w:1150](figs/filespace.jpg)
 
 
 
---- 
-#### 空闲空间管理
-跟踪记录文件卷中未分配的数据块: 数据结构?
-- 位图:用位图代表空闲数据块列表
-  - 11111111001110101011101111...
-  - $D_i = 0$ 表明数据块$i$是空闲, 否则，表示已分配
-  - 160GB磁盘 --> 40M数据块 --> 5MB位图
-  - 假定空闲空间在磁盘中均匀分布，
-      - 找到“0”之前要扫描n/r 
-        - n = 磁盘上数据块的总数 ； r = 空闲块的数目
+---
+<style scoped>
+{
+  font-size: 32px
+}
+</style>
+#### Free space management
+Tracking unallocated data blocks in a file volume: data structure?
+- Bitmap: Use a bitmap to represent the list of free data blocks
+   - 11111111001110101011101111...
+   - $D_i = 0$ indicates that the data block $i$ is free, otherwise, it means allocated
+   - 160GB disk --> 40M data block --> 5MB bitmap
+   - assuming free space is evenly distributed across the disk,
+       - scan n/r before finding "0"
+         - n = total number of data blocks on disk; r = number of free blocks
 
---- 
-#### 空闲空间管理 
-- 链表
+---
+#### Free space management
+- linked list
 ![w:800](figs/link.png)
-- 索引
+- index
 ![w:900](figs/linkindex4free.png)
  
 
 
 ---
 
-**提纲**
+**Outline**
 
-1. 概述
-2. 文件系统的基本数据结构
-3. 文件缓存
-4. 文件分配
-### 5. 文件访问过程示例
+1 Overview
+2. The basic data structure of the file system
+3. File caching
+4. File distribution
+### 5. Example of file access process
 
---- 
+---
 
-#### 文件系统组织示例
+#### File system organization example
 ![w:850](figs/fsall.png)
 
---- 
-#### 文件读操作过程
+---
+#### File read operation process
 ![w:650](figs/fsread.jpg)
 
---- 
-#### 文件写操作过程
+---
+#### File write operation process
 ![w:800](figs/fswrite.jpg)
 
 
 
---- 
-#### 文件系统分区
-- 多数磁盘划分为一个或多个分区，每个分区有一个独立的文件系统。
+---
+#### File system partition
+- Most disks are divided into one or more partitions, each with a separate file system.
 ![w:600](figs/fs-oall.png)
 
 ![bg right:40% 80%](figs/fs-block.jpg)
 
 ---
 
-### 小结
+### Summary
 
-1. 概述
-2. 文件系统的基本数据结构
-3. 文件缓存
-4. 文件分配
-5. 文件访问过程示例
-
+1 Overview
+2. The basic data structure of the file system
+3. File caching
+4. File distribution
+5. Example of file access process

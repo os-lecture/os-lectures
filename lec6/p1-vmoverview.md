@@ -11,97 +11,108 @@ backgroundColor: white
 <!-- theme: gaia -->
 <!-- _class: lead -->
 
-# 第六讲 虚拟存储管理
-## 第一节 虚拟存储概念
+# Lecture 6 Virtual storage management
+## The first section virtual storage concept
 
 <br>
 <br>
 <br>
 <br>
 
-向勇 陈渝 李国良 
+Xiang Yong Chen Yu Li Guoliang
 
-2022年秋季
-
----
-
-**提纲**
-
-### 1. 虚拟存储技术的需求
-2. 覆盖技术
-3. 交换技术
-4. 虚拟存储的基本概念
-5. 缺页异常
+Fall 2022
 
 ---
 
-#### 虚拟存储技术的需求背景
+**Outline**
 
-程序规模的增长速度**远大于**存储器容量的增长速度
-![w:900](figs/game-mem.png)
-理想中的存储器: **容量**更大、**速度**更快、**价格**更便宜的**非易失性**存储器  
+### 1. Requirements for virtual storage technology
+2. Overlay technology
+3. Switch technology
+4. Basic concepts of virtual storage
+5. Page fault exception
+
+---
+
+#### Requirements background of virtual storage technology
+
+The growth rate of the program size is much faster than the growth rate of the memory capacity
+![w:700](figs/game-mem.png)
+Ideal Memory: **Non-Volatile** memory with **larger **capacity**, **faster** speed, **cheaper **price**
 
 
 ---
-#### 虚拟存储的基本思路
-**挑战**：计算机系统时常出现**内存不够用**
-**思路**：内存不够，外存来补
-- 函数覆盖（overlay）
-  - 应用程序以**函数/模块**为单位**手动**换入换出内存
-- 程序交换（swapping）
-  - 操作系统以**程序**为单位**自动**换入换出内存
-- 虚拟存储(virtual storage)
-  - 操作系统以**页**为单位**自动**换入换出内存
+<style scoped>
+{
+  font-size: 28px
+}
+</style>
 
-虚拟存储=内存+外存
+#### Basic idea of virtual storage
+**Challenge**: The computer system often encounters **not enough memory**
+**Thinking**: Insufficient memory, use external storage to make up
+- Function coverage (overlay)
+   - The application is **manually** swapped in and out of memory in units of **function/module**
+- program exchange (swapping)
+   - The operating system automatically swaps in and out of memory in units of **programs**
+- virtual storage
+   - The operating system automatically swaps in and out of memory in units of **page**
+
+Virtual storage = memory + external storage
 
 ---
-#### 地址空间
-<!--计算机系统时常出现内存空间不够用
-- 模块覆盖（overlay）
-  - 应用程序**手动**把需要的指令和数据保存在内存中
-- 任务交换（swapping）
-  - 操作系统**自动**把暂时不能执行的程序保存到外存中
-- 虚拟存储
-  - 在有限容量的内存中，以**页为单位自动**装入更多更大的程序
+#### Address space
+<!--The computer system often has insufficient memory space
+- Module overlay (overlay)
+   - The application **manually** saves the required commands and data in memory
+- Task exchange (swapping)
+   - The operating system **automatically** saves temporarily unexecutable programs to external memory
+- virtual storage
+   - Automatically load more and larger programs in units of **pages in limited memory
 --->
-地址空间是操作系统对虚拟存储的**抽象**。
-![w:900](figs/os-abstract-address-space.png)
+The address space is the **abstraction** of virtual storage by the operating system.
+![w:800](figs/os-abstract-address-space.png)
 
 
 
 ---
 
-**提纲**
+**Outline**
 
-1. 虚拟存储技术的需求
-### 2. 覆盖技术
-3. 交换技术
-4. 虚拟存储的基本概念
-5. 缺页异常
+1. Requirements for virtual storage technology
+### 2. Overlay technology
+3. Switch technology
+4. Basic concepts of virtual storage
+5. Page fault exception
 
 ---
 
-#### 覆盖技术
-- 目标
-  - 程序员**手动**控制在**较小的可用内存**中运行**较大的程序**
-- 基本思路
-  - **不同时间段**内执行的**函数或模块**共享一块有限的空间
+#### Coverage Techniques
+- Target
+   - Programmer **manually** controlled to run **bigger programs** in **smaller available memory**
+- The basic idea
+   - **Functions or modules** executed in **different time periods** share a limited space
 
 
 ![bg right:48% 75%](figs/overlay-simple.png)
 
 ---
+<style scoped>
+{
+  font-size: 32px
+}
+</style>
 
-#### 覆盖的基本原理
-  覆盖是指把一个程序**划分**为一系列功能相对独立的程序段，让执行时**不要求同时装入**内存的程序段组成一组（称为覆盖段），**共享**主存的同一个区域。
-  - **必要**部分（常用）的代码和数据常驻内存
-  - **可选**部分（不常用）放在其他程序模块中,只在**需要时装入**内存
-  - **不存在调用关系**的模块可相互覆盖，共用同一块内存区域
+#### Fundamentals of coverage
+   Overlay refers to dividing a program into a series of program segments with relatively independent functions, so that program segments that are not required to be loaded into memory at the same time during execution form a group (called an overlay segment), and **shared **Same area of main memory.
+   - **Necessary** part of (commonly used) code and data resident in memory
+   - **Optional** parts (not commonly used) are placed in other program modules, and only loaded into memory when **needed**
+   - Modules with **no calling relationship** can overwrite each other and share the same memory area
 
 ---
 
-#### 覆盖技术示例
+#### Coverage Technique Example
 
 ![w:900](figs/overlay.png)
  
@@ -109,244 +120,305 @@ backgroundColor: white
 
 ---
 
-#### 覆盖技术的不足
+#### Insufficient overlay technology
 
-- 增加**编程困难**
-  - 需程序员划分功能模块，并确定模块间的覆盖关系
-  - 增加了编程的复杂度；
-- 增加**执行时间**
-  - 从外存装入覆盖模块
-  - 时间换空间
+- Added **Program Difficulty**
+   - Programmers are required to divide functional modules and determine the coverage relationship between modules
+   - Increased programming complexity;
+- Increased **execution time**
+   - Load overlay module from external memory
+   - time for space
 
- Turbo Pascal的Overlay系统单元支持程序员控制的覆盖技术
-
-
----
-
-**提纲**
-
-1. 虚拟存储技术的需求
-2. 覆盖技术
-### 3. 交换技术
-4. 虚拟存储的基本概念
-5. 缺页异常
-
----
-
-#### 交换技术 
-- 基本思路
-  - 操作系统以**程序**为单位**自动**换入换出内存
-- 方法
-  - **换出(swap out)**：把一个执行程序的整个地址空间内容保存到外存
-  - **换入(swap in)**：将外存中某执行程序的地址空间内容读入到内存
-
-![bg right:40% 100%](figs/swapping.png)
-
----
-
-#### 交换技术面临的问题
-
-- 交换**时机**：何时需要发生交换？
-  - 只当内存空间不够或有不够的可能时换出
-- 交换区**大小**：存放所有用户进程的所有内存映像的拷贝
-- 程序换入时的**重定位**：换出后再换入时要放在原处吗？
-  - 不一定在原处，需要某种机制保证程序正确寻址&执行 
+  Overlay system unit of Turbo Pascal supports programmer-controlled overlay technology
 
 
 ---
 
-#### 覆盖与交换的比较
-- 程序覆盖
-  - 发生在某时间段不在一个控制流上的**模块/函数间**
-  - 以模块/函数为单位
-  - 程序员须给出模块/函数间的**逻辑覆盖结构**
-- 交换
-  - 发生在运行的**程序间**
-  - 以运行的程序为单位
-  - 不需要模块间的逻辑覆盖结构
+**Outline**
+
+1. Requirements for virtual storage technology
+2. Overlay technology
+### 3. Exchange Technology
+4. Basic concepts of virtual storage
+5. Page fault exception
+
+---
+<style scoped>
+{
+  font-size: 32px
+}
+</style>
+
+#### Exchange Technology
+- The basic idea
+   - The operating system automatically swaps in and out of memory in units of **programs**
+- Method
+   - **Swap out**: Save the entire address space content of an executing program to external memory
+   - **Swap in (swap in)**: read the address space content of an execution program in the external memory into the memory
+
+![bg right:30% 100%](figs/swapping.png)
+
+---
+
+#### Problems faced by switching technology
+
+- Swap **timing**: When does the swap need to happen?
+   - Only swap out when there is not enough memory space or there is a possibility of not enough
+- Swap area **size**: store copies of all memory images of all user processes
+- **Relocation** when the program is swapped in: Should it be placed in the same place when swapped out and then swapped in?
+   - Not necessarily in place, some mechanism is needed to ensure correct addressing & execution of the program
 
 
-运行的程序：``任务``或``进程``
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+#### Comparison of Overwrite and Swap
+- program override
+   - Occurs between **modules/functions** that are not on a control flow for a certain period of time
+   - in units of modules/functions
+   - The programmer must give the **logical coverage structure** between modules/functions
+- exchange
+   - Occurs between running **programs**
+   - In units of running programs
+   - No need for logical overlay structures between modules
+
+Program to run: ``task`` or ``process``
  
 ---
 
-**提纲**
+**Outline**
 
-1. 虚拟存储技术的需求
-2. 覆盖技术
-3. 交换技术
-### 4. 虚拟存储的基本概念
-5. 缺页异常
+1. Requirements for virtual storage technology
+2. Overlay technology
+3. Switch technology
+### 4. The basic concept of virtual storage
+5. Page fault exception
 
 ---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+#### Definition of virtual storage
+- Definition
+   - Virtual Storage = **Memory** + **External Storage**
+- Ideas
+   - The operating system **temporarily stores** part of the memory that is not frequently used** to the external storage, and loads the data to be accessed by the processor from the external storage ** into the ** memory
+- **Prerequisites**
+   - Program has **locality**
 
-#### 虚拟存储的定义
-- 定义
-  - 虚拟存储 = **内存** + **外存**
-- 思路
-  - 操作系统将**不常用**的部分内存**暂存**到外存，将要处理器访问的数据从外存**装入**内存
-- **前提**
-  - 程序具有**局部性**
+![bg right:40% 95%](figs/virtual-memory.png)
 
-![bg right:54% 95%](figs/virtual-memory.png)
+---
+<style scoped>
+{
+  font-size: 28px
+}
+</style>
 
- ---
+#### Principle of Locality
 
-#### 局部性原理
+Locality (locality): A **short period** during the execution of the program, the executed **instruction** address and the **operand** address of the instruction are respectively limited to a certain area
+- **Time** Locality: One execution and next execution of **one instruction**, one access and next access of **one data** are all concentrated in a short period of time
+- **Space** locality: the current instruction and several instructions of **adjacent time**, the currently accessed data and several data accessed by adjacent time are concentrated in a small area
+- **Branch** locality: two executions of a **jump instruction** are likely to jump to the same memory location
 
-局部性（locality）：程序在执行过程中的一个**较短时期**，所执行的**指令**地址和指令的**操作数**地址，分别局限于一定区域
-- **时间**局部性：**一条指令**的一次执行和下次执行，**一个数据**的一次访问和下次访问都集中在一个较短时期内
-- **空间**局部性：当前指令和**邻近时间**的几条指令，当前访问的数据和邻近时间访问的几个数据都集中在一个较小区域内
-- **分支**局部性：一条**跳转指令**的两次执行，很可能跳到相同的内存位置
-
-局部性的意义：如果大部分程序运行具有局部性特征，则虚拟存储技术是能够实现的，而且可取得满意的效果
+Significance of locality: If most programs run with local characteristics, virtual storage technology can be realized and satisfactory results can be achieved
  
 
 
 ---
-#### 虚拟存储的思路与规则
-- 思路：将**不常用**的部分内存块暂存到外存
-- 规则：
-  - **装载**程序时：只将**当前指令执行需要的**部分页面或段装入内存
-  - 指令执行中需要的指令或数据**不在内存**（称为缺页或缺段）时：处理器通知操作系统将相应的页面或段调入内存
-  - 操作系统将内存中**暂时不用**的页面或段保存到外存
-- 实现方式：
-  - 虚拟页式存储
-  - 虚拟段式存储
+<style scoped>
+{
+  font-size: 28px
+}
+</style>
+
+#### Ideas and rules of virtual storage
+- Idea: Temporarily store some memory blocks that are not frequently used in external storage
+- Rule:
+   - When **loading** the program: only load the **partial pages or segments required by the **current instruction execution into the memory
+   - When the instruction or data **needed in the instruction execution is not in the memory** (called a page or segment): the processor notifies the operating system to transfer the corresponding page or segment into the memory
+   - The operating system saves pages or segments that are **temporarily unused** in memory to external memory
+- Method to realize:
+   - virtual page storage
+   - Virtual segment storage
 
 
 ---
-#### 虚拟存储的基本特征
-- 不连续性
-  - 物理内存分配非连续
-  - 虚拟地址空间使用非连续
-- 大用户空间
-  - 提供给用户的虚拟内存可大于实际的物理内存
-- 部分交换
-  - 虚拟存储只对部分虚拟地址空间进行调入和调出
+#### Basic characteristics of virtual storage
+- Discontinuity
+   - Physical memory allocation is non-contiguous
+   - The virtual address space uses non-contiguous
+- Large user space
+   - The virtual memory provided to the user can be larger than the actual physical memory
+- Partial exchange
+   - Virtual storage only transfers in and out of part of the virtual address space
  
 
 ---
-#### 虚拟存储的底层支撑
-- 硬件(MMU/TLB/PageTable)
-  - 页式或段式存储中的硬件**地址转换**机制、硬件**异常**
-- 软件(OS)
-  - 内存中建立**页表或段表**
-  - 管理内存和外存间页面或段的**换入和换出**
+#### The underlying support of virtual storage
+- Hardware (MMU/TLB/PageTable)
+   - Hardware **address translation** mechanism in page or segment storage, hardware **exception**
+- Software (OS)
+   - Create **page table or segment table** in memory
+   - Manage **swap-in and swap-out** of pages or segments between memory and external memory
  
 
 ---
+<style scoped>
+{
+  font-size: 28px
+}
+</style>
 
-#### 虚拟页式存储管理
-在页式存储管理的基础上，增加请求调页和页面置换
+#### Virtual paging storage management
+On the basis of paging storage management, add demand paging and page replacement
 
-- **基本思路**
-  - 当用户程序要装载到内存时，只**装入部分**页面，就启动程序运行
-  - 用户程序在运行中发现有需要的代码或数据不在内存时，则向系统发出**缺页异常**请求
-  - 操作系统在处理缺页异常时，将外存中相应的页面**调入**内存，使得用户程序能继续运行
-  - 当内存快用完时，操作系统把部分页从内存**调出**到外存
+- **The basic idea**
+   - When the user program is to be loaded into the memory, only **load some** pages, and start the program to run
+   - When the user program finds that the required code or data is not in the memory during operation, it will send a **page fault exception** request to the system
+   - When the operating system handles a page fault exception, it transfers the corresponding page in the external memory to the memory, so that the user program can continue to run
+   - When the memory is almost used up, the operating system transfers some pages from the memory** to the external memory
 
 
 ---
-#### 虚拟页式存储管理
-在页式存储管理的基础上，增加请求调页和页面置换
-- 请求调页：也称按需分页，在处理器需要访问某数据时，才把数据从外存调入内存
-- 页面置换：把不常用页换出，要使用的页换入
-- 缺页异常处理：**软硬件协同支持**
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+#### Virtual paging storage management
+On the basis of paging storage management, add demand paging and page replacement
+- Request paging: also known as on-demand paging, when the processor needs to access certain data, the data is transferred from the external storage to the memory
+- Page replacement: swap out infrequently used pages and swap in pages to be used
+- Page fault exception handling: **Software and hardware coordination support**
  
-![bg right:54% 100%](figs/vm-work.png)
+![bg right:40% 100%](figs/vm-work.png)
 
 
 ---
 
-**提纲**
+**Outline**
 
-1. 虚拟存储技术的需求
-2. 覆盖技术
-3. 交换技术
-4. 虚拟存储的基本概念
-### 5. 缺页异常
+1. Requirements for virtual storage technology
+2. Overlay technology
+3. Switch technology
+4. Basic concepts of virtual storage
+### 5. Page fault exception
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+#### Processing flow of page fault exception
+1. The CPU reads the memory unit, matches the physical address in the TLB according to its virtual address, misses, **reads the page table**;
+1. Since the existence bit of the page table entry is 0, the CPU generates a **page fault exception**;
+1. The OS **finds** the page content of the corresponding application stored in the external memory;
+
+![bg left:40% 100%](figs/page-fault-handler.png)
+
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+#### Processing flow of page fault exception
+
+4-1. If there is an idle physical page frame, swap the page content** in the external memory into an idle physical page frame**;
+4-2. If there is no free physical page frame, release/swap out a physical page frame to the external memory through the replacement algorithm, and then swap the page content in the external memory into a free physical page frame;
+
+![bg left:40% 100%](figs/page-fault-handler.png)
 
 ---
 
-#### 缺页异常的处理流程
-1. CPU读内存单元，在TLB中根据其虚拟地址匹配物理地址，未命中，**读页表**；
-1. 由于页表项的存在位为0，CPU产生**缺页异常**；
-1. OS**查找**到保存在外存中对应的应用的页面内容；
+#### Processing flow of page fault exception
 
-![bg left:51% 100%](figs/page-fault-handler.png)
+5. **Modify the page table entry**, establish the mapping from the virtual page to the physical page frame, and the existence position is 1;
+6. The OS returns to the application program and asks the processor to **re-execute** the read memory unit instruction that caused the page fault exception.
 
-
----
-
-#### 缺页异常的处理流程
-
-4-1. 如有空闲物理页帧，把外存中的页面内容**换入到某空闲物理页帧**中；
-4-2. 如无空闲物理页帧，通过置换算法**释放/换出**某物理页帧到外存，再把外存中的页面内容换入到某空闲物理页帧中；
-
-![bg left:51% 100%](figs/page-fault-handler.png)
+![bg left:40% 100%](figs/page-fault-handler.png)
+* Where are unmapped pages kept? How to find this page? *
 
 ---
-
-#### 缺页异常的处理流程
-
-5. **修改页表项**，建立虚拟页到物理页帧的映射，存在位置1；
-6. OS返回到应用程序，让处理器**重新执行**产生缺页异常的读内存单元指令。
-
-![bg left:51% 100%](figs/page-fault-handler.png)
-*在何处保存未被映射的页？如何找到这个页？*
-
+#### Where to store unmapped pages?
+   - Swap space (disk/file form)
+     - Store unmapped pages in a special format
+   - a file (code or data) on disk
+   ![bg right:50% 100%](figs/page-fault-handler.png)
 ---
-#### 在何处保存未被映射的页？
-  - 交换空间（磁盘/文件形态）
-    - 采用特殊格式存储未被映射的页面
-  - 磁盘上的文件(代码或数据)
-  ![bg right:50% 100%](figs/page-fault-handler.png)
----
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
 
-#### 虚拟存储的外存交换空间
+#### External memory swap space for virtual storage
 
-在何处保存放在外存中的页的地址？
+Where to save the address of the page placed in external memory?
 
-- 交换空间
-    - 磁盘分区：一般是扇区地址
-    - 在存在位为0的页表项中保存外存的页地址
+- Swap space
+     - Disk partition: generally sector address
+     - Save the page address of the external memory in the page table entry whose existence bit is 0
      
 
-![bg right:54% 100%](figs/page-fault-handler.png)
+![bg right:50% 100%](figs/page-fault-handler.png)
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+#### External storage disk file for virtual storage
+
+Where to save the address of the page placed in external memory?
+
+- a file (code or data) on disk
+   - The logical segment representation in the address space has a corresponding file location
+     - eg: `MemorySet::MapArea`
+   - Code snippets: executable binaries
+   - Dynamically loaded shared library program segment: dynamically called library file
+
+![bg right:40% 100%](figs/page-fault-handler.png)
+
+---
+<style scoped>
+{
+  font-size: 30px
+}
+</style>
+
+#### Virtual Storage Performance
+
+Effective memory access time (EAT, Effective memory Access Time)
+- EAT = memory access time $*$ (1-p) + page fault exception handling time
+- Page fault processing time = disk access time*p(1+q)
+   - p: page fault rate;
+   - q: writeback probability
+* Example
+   - Memory access time: 10 ns; Disk access time: 5 ms
+   - EAT = 10(1–p) + 5,000,000p(1+q)
 
 ---
 
-#### 虚拟存储的外存磁盘文件
+### Summary
 
-在何处保存放在外存中的页的地址？
-
-- 磁盘上的文件(代码或数据)
-  - 地址空间中的逻辑段表示中有对应的文件位置
-    - 如：`MemorySet::MapArea`
-  - 代码段：可执行二进制文件
-  - 动态加载的共享库程序段：动态调用的库文件
-
-![bg right:48% 100%](figs/page-fault-handler.png)
-
----
-#### 虚拟存储的性能
-
-有效存储访问时间（EAT, Effective memory Access Time）
-- EAT = 内存访问时间 $*$ (1-p)  + 缺页异常处理时间 
-- 缺页异常处理时间 = 磁盘访问时间*p(1+q)
-  - p: 缺页率；
-  - q: 写回概率
-* 例子
-  - 内存访问时间: 10 ns ；磁盘访问时间: 5 ms
-  - EAT = 10(1–p) + 5,000,000p(1+q) 
-
----
-
-### 小结
-
-1. 虚拟存储技术的需求
-2. 覆盖技术
-3. 交换技术
-4. 虚拟存储的基本概念
-5. 缺页异常
+1. Requirements for virtual storage technology
+2. Overlay technology
+3. Switch technology
+4. Basic concepts of virtual storage
+5. Page fault exception
